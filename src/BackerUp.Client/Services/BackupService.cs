@@ -1,7 +1,7 @@
-﻿using BackerUp_Client.Models;
-using Class_Lib;
+﻿using BackerUp.Client.Models;
+using BackerUp.Core;
 
-namespace BackerUp_Client.Services;
+namespace BackerUp.Client.Services;
 
 public class BackupService {
     public List<BackupJob> BackupJobs { get; set; }

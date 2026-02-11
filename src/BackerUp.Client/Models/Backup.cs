@@ -1,7 +1,7 @@
-﻿using BackerUp_Client.Services;
-using Class_Lib;
+﻿using BackerUp.Client.Services;
+using BackerUp.Core;
 
-namespace BackerUp_Client.Models;
+namespace BackerUp.Client.Models;
 
 public abstract class Backup
 {

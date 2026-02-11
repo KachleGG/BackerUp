@@ -1,10 +1,10 @@
-﻿using Class_Lib;
+﻿using BackerUp.Core;
 using System;
 using System.Collections.Generic;
 using System.IO;
 
-namespace BackerUp_Client.Models {
-    public class BackupIncremental : Backup {
+namespace BackerUp.Client.Models {
+    public class BackupDifferential : Backup {
         public override void PerformBackup(BackupJob job, JobsMetadata jobMeta) {
             if (job == null || job.Targets == null || job.Sources == null) {
                 return;
@@ -14,12 +14,13 @@ namespace BackerUp_Client.Models {
 
             PackageEntry? current = jobMeta.GetCurrentPackage();
             if (current == null) {
-                // No package, perform full
+                // If no package exists, perform a full backup
                 base.PerformBackup(job, jobMeta);
                 return;
             }
 
-            DateTime? last = jobMeta.LastSnapshotTimestampUtc ?? jobMeta.LastPackageTimestampUtc;
+            // Differential compares to the last package creation time (start of current package)
+            DateTime? last = jobMeta.LastPackageTimestampUtc;
             if (!last.HasValue) {
                 base.PerformBackup(job, jobMeta);
                 return;
@@ -85,7 +86,7 @@ namespace BackerUp_Client.Models {
 
             jobMeta.IncrementSnapshotCount(current.Name);
             jobMeta.LastSnapshotTimestampUtc = now;
-            jobMeta.Method = BackupMethod.Incremental;
+            jobMeta.Method = BackupMethod.Differential;
             jobMeta.SaveToAppData();
 
             EnforceRetention(job, jobMeta);

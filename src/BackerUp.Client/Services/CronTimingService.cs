@@ -1,7 +1,7 @@
-﻿using Class_Lib;
+﻿using BackerUp.Core;
 using Cronos;
 
-namespace BackerUp_Client.Services;
+namespace BackerUp.Client.Services;
 
 public static class CronTimingService {
     public static bool IsJobDue(BackupJob? job, JobsMetadata? jobMeta) {

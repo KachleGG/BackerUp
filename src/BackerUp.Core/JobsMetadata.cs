@@ -1,7 +1,7 @@
 ﻿using System.Text.Json;
 using System.Text.Json.Serialization;
 
-namespace Class_Lib;
+namespace BackerUp.Core;
 
 public class JobsMetadata
 {

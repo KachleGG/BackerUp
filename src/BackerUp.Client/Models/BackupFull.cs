@@ -1,6 +1,6 @@
-﻿using Class_Lib;
+﻿using BackerUp.Core;
 
-namespace BackerUp_Client.Models {
+namespace BackerUp.Client.Models {
     public class BackupFull : Backup {
         public override void PerformBackup(BackupJob job, JobsMetadata jobMeta) {
             // Full uses the base implementation

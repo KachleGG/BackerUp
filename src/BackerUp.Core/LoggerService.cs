@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Class_Lib
+namespace BackerUp.Core
 {
     public static class LoggerService
     {
