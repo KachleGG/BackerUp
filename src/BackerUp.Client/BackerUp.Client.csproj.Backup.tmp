@@ -8,11 +8,16 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="Cronos" Version="0.11.1" />
     <PackageReference Include="Quartz" Version="3.15.1" />
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\BackerUp.Core\BackerUp.Core.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Jobs\" />
   </ItemGroup>
 
 </Project>

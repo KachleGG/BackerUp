@@ -1,9 +1,9 @@
 ﻿using BackerUp.Core;
-using Cronos;
+using Quartz;
 
 namespace BackerUp.Client.Services;
 
-public static class CronTimingService {
+public static class TimingService {
     public static bool IsJobDue(BackupJob? job, JobsMetadata? jobMeta) {
         if (job == null) {
             return false;
@@ -16,19 +16,20 @@ public static class CronTimingService {
         DateTime nowUtc = DateTime.UtcNow;
 
         try {
-            CronExpression cron = CronExpression.Parse(job.Timing, CronFormat.Standard);
+            CronExpression cron = new CronExpression(job.Timing);
+            cron.TimeZone = TimeZoneInfo.Utc;
 
             DateTime? lastRun = jobMeta?.LastSnapshotTimestampUtc;
-            DateTime from;
+            DateTimeOffset from;
             if (!lastRun.HasValue || lastRun.Value == DateTime.MinValue) {
                 // if never run, search from a reasonable past window
-                from = nowUtc.AddYears(-1);
+                from = new DateTimeOffset(nowUtc.AddYears(-1), TimeSpan.Zero);
             } else {
-                from = lastRun.Value.AddSeconds(1);
+                from = new DateTimeOffset(lastRun.Value.AddSeconds(1), TimeSpan.Zero);
             }
 
-            DateTime? next = cron.GetNextOccurrence(from, TimeZoneInfo.Utc);
-            return next.HasValue && next.Value <= nowUtc;
+            DateTimeOffset? next = cron.GetNextValidTimeAfter(from);
+            return next.HasValue && next.Value.UtcDateTime <= nowUtc;
         } catch {
             return false;
         }
@@ -40,9 +41,11 @@ public static class CronTimingService {
         }
 
         try {
-            CronExpression cron = CronExpression.Parse(job.Timing, CronFormat.Standard);
-            DateTime from = (jobMeta?.LastSnapshotTimestampUtc ?? nowUtc).AddSeconds(1);
-            return cron.GetNextOccurrence(from, TimeZoneInfo.Utc);
+            CronExpression cron = new CronExpression(job.Timing);
+            cron.TimeZone = TimeZoneInfo.Utc;
+            DateTimeOffset from = new DateTimeOffset((jobMeta?.LastSnapshotTimestampUtc ?? nowUtc).AddSeconds(1), TimeSpan.Zero);
+            DateTimeOffset? next = cron.GetNextValidTimeAfter(from);
+            return next?.UtcDateTime;
         } catch {
             return null;
         }

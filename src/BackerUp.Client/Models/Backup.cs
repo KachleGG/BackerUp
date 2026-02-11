@@ -16,7 +16,7 @@ public abstract class Backup
         // Check cron/timing to determine if job should run now
 #if DEBUG
 #else
-        if (!CronTimingService.IsJobDue(job, jobMeta))
+        if (!TimingService.IsJobDue(job, jobMeta))
         {
             LoggerService.Log($"Job (Id: {job.Id}) is not due yet.");
             return;
