@@ -8,11 +8,17 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="Moq" Version="4.20.72" />
     <PackageReference Include="MSTest" Version="4.0.1" />
   </ItemGroup>
 
   <ItemGroup>
     <Using Include="Microsoft.VisualStudio.TestTools.UnitTesting" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\BackerUp.Client\BackerUp.Client.csproj" />
+    <ProjectReference Include="..\BackerUp.Core\BackerUp.Core.csproj" />
   </ItemGroup>
 
 </Project>
