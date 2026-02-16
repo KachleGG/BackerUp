@@ -1,5 +1,5 @@
 using BackerUp.Client.Services;
-using BackerUp.Core;
+using BackerUp.Core.Models;
 
 namespace BackerUp.Tests.Client;
 
@@ -19,7 +19,7 @@ public class BackupServiceTests
         var service = new BackupService(jobs);
 
         Assert.IsNotNull(service.BackupJobs);
-        Assert.AreEqual(2, service.BackupJobs.Count);
+        Assert.HasCount(2, service.BackupJobs);
     }
 
     [TestMethod]
@@ -30,7 +30,7 @@ public class BackupServiceTests
         var service = new BackupService(jobs);
 
         Assert.IsNotNull(service.BackupJobs);
-        Assert.AreEqual(0, service.BackupJobs.Count);
+        Assert.HasCount(0, service.BackupJobs);
     }
 
     [TestMethod]
@@ -82,7 +82,7 @@ public class BackupServiceTests
 
         service.BackupJobs.Add(new BackupJob { Id = 2 });
 
-        Assert.AreEqual(2, service.BackupJobs.Count);
+        Assert.HasCount(2, service.BackupJobs);
     }
 
     [TestMethod]
@@ -98,7 +98,7 @@ public class BackupServiceTests
             new BackupJob { Id = 5 }
         };
 
-        Assert.AreEqual(3, service.BackupJobs.Count);
+        Assert.HasCount(3, service.BackupJobs);
         Assert.AreEqual(3, service.BackupJobs[0].Id);
     }
 

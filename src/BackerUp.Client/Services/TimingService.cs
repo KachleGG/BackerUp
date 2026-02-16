@@ -1,4 +1,4 @@
-﻿using BackerUp.Core;
+﻿using BackerUp.Core.Models;
 using Quartz;
 
 namespace BackerUp.Client.Services;

@@ -1,11 +1,11 @@
 ﻿using System.Text.Json;
 using System.Text.Json.Serialization;
 
-namespace BackerUp.Core;
+namespace BackerUp.Core.Models;
 
 public class JobsMetadata
 {
-    public BackupJob Job { get; set; } = new BackupJob();
+    public int JobId { get; set; }
 
     public int NextPackageIndex { get; set; } = 0;
 
@@ -18,18 +18,15 @@ public class JobsMetadata
 
     public List<PackageEntry> Packages { get; set; } = new();
 
-    public static string GetAppDataDirectory() {
-        string dir = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "BackerUp", "JobsMetadata");
-        if (!Directory.Exists(dir)) {
-            Directory.CreateDirectory(dir);
+    public static void EnsureMetadataFolder() {
+        if (!Directory.Exists(AppConstants.MetadataFolderPath)) {
+            Directory.CreateDirectory(AppConstants.MetadataFolderPath);
         }
-
-        return dir;
     }
 
     public void SaveToAppData() {
-        string dir = GetAppDataDirectory();
-        string file = Path.Combine(dir, $"job_{Job.Id}.json");
+        EnsureMetadataFolder();
+        string file = Path.Combine(AppConstants.MetadataFolderPath, $"job_{JobId}.json");
         try {
             JsonSerializerOptions opts = new() { WriteIndented = true };
             opts.Converters.Add(new JsonStringEnumConverter());
@@ -39,8 +36,8 @@ public class JobsMetadata
     }
 
     public static JobsMetadata? LoadFromAppData(BackupJob job) {
-        string dir = GetAppDataDirectory();
-        string file = Path.Combine(dir, $"job_{job.Id}.json");
+        EnsureMetadataFolder();
+        string file = Path.Combine(AppConstants.MetadataFolderPath, $"job_{job.Id}.json");
         try {
             if (!File.Exists(file)) {
                 return null;
@@ -60,7 +57,7 @@ public class JobsMetadata
             return info;
         }
 
-        JobsMetadata created = new() { Job = job ,NextPackageIndex = 0, Method = job.Method };
+        JobsMetadata created = new() { JobId = job.Id ,NextPackageIndex = 0, Method = job.Method };
         created.SaveToAppData();
         return created;
     }

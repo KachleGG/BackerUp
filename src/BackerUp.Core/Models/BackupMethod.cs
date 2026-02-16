@@ -5,7 +5,7 @@ using System.Text;
 using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 
-namespace BackerUp.Core;
+namespace BackerUp.Core.Models;
 
 public enum BackupMethod
 {

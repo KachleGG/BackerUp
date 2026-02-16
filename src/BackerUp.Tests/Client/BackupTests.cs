@@ -1,5 +1,5 @@
 using BackerUp.Client.Models;
-using BackerUp.Core;
+using BackerUp.Core.Models;
 
 namespace BackerUp.Tests.Client;
 
@@ -60,7 +60,7 @@ public class BackupTests
     {
         return new JobsMetadata
         {
-            Job = job,
+            JobId = job.Id,
             NextPackageIndex = 0,
             Method = job.Method
         };
@@ -78,7 +78,7 @@ public class BackupTests
         backup.PerformBackup(job, jobMeta);
 
         var packages = Directory.GetDirectories(_targetDir, "package_*");
-        Assert.AreEqual(1, packages.Length);
+        Assert.HasCount(1, packages);
     }
 
     [TestMethod]
@@ -107,7 +107,7 @@ public class BackupTests
 
         Assert.IsNotNull(jobMeta.LastSnapshotTimestampUtc);
         Assert.IsNotNull(jobMeta.LastPackageTimestampUtc);
-        Assert.AreEqual(1, jobMeta.Packages.Count);
+        Assert.HasCount(1, jobMeta.Packages);
         Assert.AreEqual(1, jobMeta.NextPackageIndex);
     }
 
@@ -131,7 +131,7 @@ public class BackupTests
 
         backup.PerformBackup(null!, jobMeta);
 
-        Assert.AreEqual(0, jobMeta.Packages.Count);
+        Assert.HasCount(0, jobMeta.Packages);
     }
 
     [TestMethod]
@@ -144,7 +144,7 @@ public class BackupTests
 
         backup.PerformBackup(job, jobMeta);
 
-        Assert.AreEqual(0, jobMeta.Packages.Count);
+        Assert.HasCount(0, jobMeta.Packages);
     }
 
     [TestMethod]
@@ -157,7 +157,7 @@ public class BackupTests
 
         backup.PerformBackup(job, jobMeta);
 
-        Assert.AreEqual(0, jobMeta.Packages.Count);
+        Assert.HasCount(0, jobMeta.Packages);
     }
 
     [TestMethod]
@@ -209,7 +209,7 @@ public class BackupTests
         backup.PerformBackup(job, jobMeta);
 
         // Should create a full backup since no package exists
-        Assert.AreEqual(1, jobMeta.Packages.Count);
+        Assert.HasCount(1, jobMeta.Packages);
         Assert.AreEqual(BackupMethod.Full, jobMeta.Method);
     }
 
@@ -265,7 +265,7 @@ public class BackupTests
 
         backup.PerformBackup(null!, jobMeta);
 
-        Assert.AreEqual(0, jobMeta.Packages.Count);
+        Assert.HasCount(0, jobMeta.Packages);
     }
 
     [TestMethod]
@@ -292,7 +292,7 @@ public class BackupTests
         diffBackup.PerformBackup(job, jobMeta);
 
         // Should create new full backup (new package)
-        Assert.AreEqual(2, jobMeta.Packages.Count);
+        Assert.HasCount(2, jobMeta.Packages);
     }
 
     #endregion
@@ -308,7 +308,7 @@ public class BackupTests
 
         backup.PerformBackup(job, jobMeta);
 
-        Assert.AreEqual(1, jobMeta.Packages.Count);
+        Assert.HasCount(1, jobMeta.Packages);
         Assert.AreEqual(BackupMethod.Full, jobMeta.Method);
     }
 
@@ -362,7 +362,7 @@ public class BackupTests
 
         backup.PerformBackup(null!, jobMeta);
 
-        Assert.AreEqual(0, jobMeta.Packages.Count);
+        Assert.HasCount(0, jobMeta.Packages);
     }
 
     [TestMethod]
@@ -389,7 +389,7 @@ public class BackupTests
         incBackup.PerformBackup(job, jobMeta);
 
         // Should create new full backup
-        Assert.AreEqual(2, jobMeta.Packages.Count);
+        Assert.HasCount(2, jobMeta.Packages);
     }
 
     [TestMethod]
@@ -457,8 +457,8 @@ public class BackupTests
         var packages1 = Directory.GetDirectories(_targetDir, "package_*");
         var packages2 = Directory.GetDirectories(target2, "package_*");
 
-        Assert.AreEqual(1, packages1.Length);
-        Assert.AreEqual(1, packages2.Length);
+        Assert.HasCount(1, packages1);
+        Assert.HasCount(1, packages2);
     }
 
     [TestMethod]
@@ -473,7 +473,7 @@ public class BackupTests
         // Should not throw
         backup.PerformBackup(job, jobMeta);
 
-        Assert.AreEqual(1, jobMeta.Packages.Count);
+        Assert.HasCount(1, jobMeta.Packages);
     }
 
     [TestMethod]
@@ -490,14 +490,14 @@ public class BackupTests
         backup.PerformBackup(job, jobMeta);
 
         // Should only keep 2 packages due to retention
-        Assert.AreEqual(2, jobMeta.Packages.Count);
+        Assert.HasCount(2, jobMeta.Packages);
     }
 
     [TestMethod]
     public void Backup_NoRetention_KeepsAllPackages()
     {
         var job = CreateTestJob(BackupMethod.Full);
-        job.BackupRetention = null;
+        job.BackupRetention = null!;
         var jobMeta = CreateTestMetadata(job);
         var backup = new BackupFull();
 
@@ -505,7 +505,7 @@ public class BackupTests
         backup.PerformBackup(job, jobMeta);
         backup.PerformBackup(job, jobMeta);
 
-        Assert.AreEqual(3, jobMeta.Packages.Count);
+        Assert.HasCount(3, jobMeta.Packages);
     }
 
     [TestMethod]
@@ -519,7 +519,7 @@ public class BackupTests
         backup.PerformBackup(job, jobMeta);
         backup.PerformBackup(job, jobMeta);
 
-        Assert.AreEqual(2, jobMeta.Packages.Count);
+        Assert.HasCount(2, jobMeta.Packages);
     }
 
     #endregion

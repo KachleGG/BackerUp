@@ -1,4 +1,5 @@
 ﻿using BackerUp.Core;
+using BackerUp.Core.Models;
 using System;
 using System.Collections.Generic;
 using System.IO;

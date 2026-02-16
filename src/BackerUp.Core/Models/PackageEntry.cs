@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace BackerUp.Core
+namespace BackerUp.Core.Models
 {
     public class PackageEntry
     {

@@ -1,4 +1,4 @@
-﻿using BackerUp.Core;
+﻿using BackerUp.Core.Models;
 
 namespace BackerUp.Client.Models {
     public class BackupFull : Backup {

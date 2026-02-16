@@ -1,5 +1,6 @@
 using BackerUp.Client.Services;
 using BackerUp.Core;
+using BackerUp.Core.Models;
 
 namespace BackerUp.Tests.Client;
 
