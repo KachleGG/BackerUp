@@ -4,8 +4,11 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace BackerUp.Editor.UI.Components;
-
-public abstract class Component
+namespace BackerUp.Editor.UI.Enums
 {
+    public enum Pane
+    {
+        Left,
+        Right
+    }
 }

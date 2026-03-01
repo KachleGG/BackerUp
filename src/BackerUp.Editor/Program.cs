@@ -6,9 +6,9 @@ namespace BackerUp.Editor
     {
         static void Main(string[] args)
         {
-            Console.CursorVisible = false;
-            // Load jobs from BackerUp.conf in appdata folder
-            List<BackupJob> jobs = Config.GetJobs();
+            Application app = new Application();
+
+            app.Run();
         }
     }
 }

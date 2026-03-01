@@ -21,9 +21,15 @@ namespace BackerUp.Core.Models
             }
             catch (Exception ex)
             {
-                LoggerService.Log(ex.Message);
                 return new List<BackupJob>();
             }
+        }
+
+        public static void SaveJobs(List<BackupJob> jobs)
+        {
+            EnsureAppData();
+            var options = new JsonSerializerOptions { WriteIndented = true, Converters = { new JsonStringEnumConverter() } };
+            File.WriteAllText(AppConstants.ConfigFilePath, JsonSerializer.Serialize(jobs, options));
         }
 
         public static void EnsureAppData()
