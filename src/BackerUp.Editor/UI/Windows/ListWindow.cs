@@ -14,6 +14,7 @@ namespace BackerUp.Editor.UI.Windows
         public Action<BackupJob> OnSelectionChanged { get; set; }
         public Action OnEnter { get; set; }
         public Action OnDelete { get; set; }
+        public Action OnCreate { get; set; }
 
         public ListWindow(List<BackupJob> jobs)
         {
@@ -33,7 +34,8 @@ namespace BackerUp.Editor.UI.Windows
                     OnSelectionChanged?.Invoke(Jobs[SelectedComponent]);
                 }},
                 { ConsoleKey.Enter, () => OnEnter?.Invoke() },
-                { ConsoleKey.Delete, () => OnDelete?.Invoke() }
+                { ConsoleKey.Delete, () => OnDelete?.Invoke() },
+                { ConsoleKey.Insert, () => OnCreate?.Invoke() }
             };
 
             for (int i = 0; i < Jobs.Count; i++)

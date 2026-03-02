@@ -52,6 +52,17 @@ namespace BackerUp.Editor
 
             listWindow.Initialize();
 
+            listWindow.OnCreate = () =>
+            {
+                var createWindow = new CreateConfigWindow(Jobs.Count);
+                createWindow.OnClose = () =>
+                {
+                    CloseWindow();
+                    Initialize();
+                };
+                OpenWindow(createWindow);
+            };
+
             listWindow.OnDelete = () =>
             {
                 if (Jobs.Count == 0) return;

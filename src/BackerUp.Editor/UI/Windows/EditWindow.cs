@@ -15,7 +15,9 @@ namespace BackerUp.Editor.UI.Windows
         public Action OnCancel { get; set; }
 
         private TextBox _idBox;
-        private TextBox _methodBox;
+        private ListSelection _sourcesList;
+        private ListSelection _targetsList;
+        private OptionBox _methodBox;
         private TextBox _timingBox;
         private TextBox _retentionCountBox;
         private TextBox _retentionSizeBox;
@@ -28,12 +30,22 @@ namespace BackerUp.Editor.UI.Windows
         public void Initialize()
         {
             _idBox = new TextBox { Label = "ID", Value = Job.Id.ToString() };
-            _methodBox = new TextBox { Label = "Method", Value = Job.Method.ToString() };
+            _sourcesList = new ListSelection { Label = "Sources", Values = new List<string>(Job.Sources) };
+            _targetsList = new ListSelection { Label = "Targets", Values = new List<string>(Job.Targets) };
+            var methodNames = Enum.GetNames<BackupMethod>().ToList();
+            _methodBox = new OptionBox
+            {
+                Label = "Method",
+                Options = methodNames,
+                SelectedIndex = methodNames.IndexOf(Job.Method.ToString())
+            };
             _timingBox = new TextBox { Label = "Timing", Value = Job.Timing };
             _retentionCountBox = new TextBox { Label = "Retention Count", Value = Job.BackupRetention.Count.ToString() };
             _retentionSizeBox = new TextBox { Label = "Retention Size", Value = Job.BackupRetention.Size.ToString() };
 
             Components.Add(_idBox);
+            Components.Add(_sourcesList);
+            Components.Add(_targetsList);
             Components.Add(_methodBox);
             Components.Add(_timingBox);
             Components.Add(_retentionCountBox);
@@ -50,6 +62,7 @@ namespace BackerUp.Editor.UI.Windows
                     if (Enum.TryParse<BackupMethod>(_methodBox.Value, true, out var method))
                         Job.Method = method;
 
+
                     Job.Timing = _timingBox.Value;
 
                     if (int.TryParse(_retentionCountBox.Value, out int count))
@@ -57,6 +70,9 @@ namespace BackerUp.Editor.UI.Windows
 
                     if (int.TryParse(_retentionSizeBox.Value, out int size))
                         Job.BackupRetention.Size = size;
+
+                    Job.Sources = new List<string>(_sourcesList.Values);
+                    Job.Targets = new List<string>(_targetsList.Values);
 
                     Config.SaveJobs(this.Application.Jobs);
                     OnSave?.Invoke();

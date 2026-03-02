@@ -3,7 +3,7 @@ using BackerUp.Editor.UI.Windows;
 
 namespace BackerUp.Editor.UI.Dialogues
 {
-    public class DeletionWarningDialogue : Window, IDialogue
+    public class DeletionWarningDialogue : Window
     {
         public Action OnConfirm { get; set; }
         public Action OnCancel { get; set; }
