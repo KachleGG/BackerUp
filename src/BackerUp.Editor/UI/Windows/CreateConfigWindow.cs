@@ -13,6 +13,8 @@ namespace BackerUp.Editor.UI.Windows
         public Action OnClose { get; set; }
 
         private TextBox _idBox;
+        private ListSelection _sourcesList;
+        private ListSelection _targetsList;
         private OptionBox _methodBox;
         private TextBox _timingBox;
         private TextBox _retentionCountBox;
@@ -21,6 +23,9 @@ namespace BackerUp.Editor.UI.Windows
         public CreateConfigWindow(int jobCount)
         {
             _idBox = new TextBox { Label = "ID", Value = jobCount.ToString() };
+
+            _sourcesList = new ListSelection { Label = "Sources", Values = new List<string>() };
+            _targetsList = new ListSelection { Label = "Targets", Values = new List<string>() };
             _methodBox = new OptionBox
             {
                 Label = "Method",
@@ -32,6 +37,8 @@ namespace BackerUp.Editor.UI.Windows
             _retentionSizeBox = new TextBox { Label = "Retention Size", Value = "1" };
 
             Components.Add(_idBox);
+            Components.Add(_sourcesList);
+            Components.Add(_targetsList);
             Components.Add(_methodBox);
             Components.Add(_timingBox);
             Components.Add(_retentionCountBox);
