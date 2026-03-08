@@ -5,7 +5,7 @@ namespace BackerUp.Core.Models;
 
 public class JobsMetadata
 {
-    public int JobId { get; set; }
+    public string JobId { get; set; } = "";
 
     public int NextPackageIndex { get; set; } = 0;
 

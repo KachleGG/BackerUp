@@ -26,11 +26,11 @@ namespace BackerUp.Editor.UI.Windows
             Pairs = new Dictionary<ConsoleKey, Action>
             {
                 { ConsoleKey.UpArrow, () => {
-                    SelectedComponent = Math.Max(0, SelectedComponent - 1);
+                    MoveSelection(SelectedComponent - 1);
                     OnSelectionChanged?.Invoke(Jobs[SelectedComponent]);
                 }},
                 { ConsoleKey.DownArrow, () => {
-                    SelectedComponent = Math.Min(Components.Count - 1, SelectedComponent + 1);
+                    MoveSelection(SelectedComponent + 1);
                     OnSelectionChanged?.Invoke(Jobs[SelectedComponent]);
                 }},
                 { ConsoleKey.Enter, () => OnEnter?.Invoke() },
@@ -40,7 +40,8 @@ namespace BackerUp.Editor.UI.Windows
 
             for (int i = 0; i < Jobs.Count; i++)
             {
-                Components.Add(new SelectionField { Text = Convert.ToString(i), Job = Jobs[i] });
+                // TODO: replace job id with name
+                Components.Add(new SelectionField { Text = Jobs[i].Id.ToString() });
             }
         }
     }

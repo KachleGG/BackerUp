@@ -18,8 +18,6 @@ namespace BackerUp.Editor.UI.Components
             Console.Write($"[ {Text} ]");
         }
 
-        public void HandleKey(ConsoleKeyInfo key)
-        {
-        }
+        public void HandleKey(ConsoleKeyInfo key) { }
     }
 }

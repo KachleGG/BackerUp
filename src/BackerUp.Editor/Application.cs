@@ -22,6 +22,8 @@ namespace BackerUp.Editor
 
         public void Initialize()
         {
+            Console.OutputEncoding = Encoding.UTF8;
+
             Console.CursorVisible = false;
             Console.BackgroundColor = ConsoleColor.Blue;
             Console.ForegroundColor = ConsoleColor.White;
@@ -54,13 +56,18 @@ namespace BackerUp.Editor
 
             listWindow.OnCreate = () =>
             {
-                var createWindow = new CreateConfigWindow(Jobs.Count);
-                createWindow.OnClose = () =>
+                var createWindow = new CreateConfigWindow();
+                createWindow.OnSave = () =>
                 {
                     CloseWindow();
                     Initialize();
                 };
                 OpenWindow(createWindow);
+                createWindow.OnCancel = () =>
+                {
+                    CloseWindow();
+                    Initialize();
+                };
             };
 
             listWindow.OnDelete = () =>

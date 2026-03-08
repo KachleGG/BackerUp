@@ -4,5 +4,4 @@
 - [ ] Differentiate sources
 
 ## BackerUp_Editor
-- [ ] Add handeling for sources and destinations
-- [ ] Add names into BackupJob model
+- [ ] Make it so the whole app doesnt redraw itself on every click

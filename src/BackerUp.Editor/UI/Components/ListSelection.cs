@@ -1,4 +1,6 @@
-﻿using System;
+﻿using BackerUp.Editor.UI.Enums;
+using BackerUp.Editor.UI.Windows;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -10,6 +12,7 @@ namespace BackerUp.Editor.UI.Components
     {
         public string Label { get; set; } = "";
         public List<string> Values { get; set; } = new List<string>();
+        public Action OnPress { get; set; }
 
         public string Text => $"{Label}: {string.Join(", ", Values).Substring(0, Math.Min(20, string.Join(", ", Values).Length))}...";
 
@@ -20,12 +23,6 @@ namespace BackerUp.Editor.UI.Components
             Console.Write($"{Label}: {string.Join(", ", Values).Substring(0, Math.Min(20, string.Join(", ", Values).Length))}...");
         }
 
-        public void HandleKey(ConsoleKeyInfo key)
-        {
-            if (key.Key == ConsoleKey.Enter)
-            {
-                // TODO: Open a list creating window or something
-            }
-        }
+        public void HandleKey(ConsoleKeyInfo key) { }
     }
 }

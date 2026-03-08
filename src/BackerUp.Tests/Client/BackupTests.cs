@@ -43,7 +43,7 @@ public class BackupTests
         catch { }
     }
 
-    private BackupJob CreateTestJob(BackupMethod method, int id = 1)
+    private BackupJob CreateTestJob(BackupMethod method, string id = "1")
     {
         return new BackupJob
         {

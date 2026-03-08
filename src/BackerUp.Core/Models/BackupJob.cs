@@ -10,7 +10,7 @@ namespace BackerUp.Core.Models;
 public class BackupJob
 {
     [JsonPropertyName("id")]
-    public int Id { get; set; } = 0;
+    public string Id { get; set; } = "";
 
     [JsonPropertyName("sources")]
     public List<string> Sources { get; set; } = new List<string>();

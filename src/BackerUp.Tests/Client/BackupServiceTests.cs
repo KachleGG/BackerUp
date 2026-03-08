@@ -12,8 +12,8 @@ public class BackupServiceTests
     {
         var jobs = new List<BackupJob>
         {
-            new BackupJob { Id = 1 },
-            new BackupJob { Id = 2 }
+            new BackupJob { Id = "1" },
+            new BackupJob { Id = "2" }
         };
 
         var service = new BackupService(jobs);
@@ -64,7 +64,7 @@ public class BackupServiceTests
     {
         var jobs = new List<BackupJob>
         {
-            new BackupJob { Id = 401, Timing = "0 0 0 1 1 ? 2099", Sources = new List<string>(), Targets = new List<string>() }
+            new BackupJob { Id = "401", Timing = "0 0 0 1 1 ? 2099", Sources = new List<string>(), Targets = new List<string>() }
         };
         var service = new BackupService(jobs);
         var cts = new CancellationTokenSource();
@@ -77,10 +77,10 @@ public class BackupServiceTests
     [TestMethod]
     public void BackupJobs_CanBeModified()
     {
-        var jobs = new List<BackupJob> { new BackupJob { Id = 1 } };
+        var jobs = new List<BackupJob> { new BackupJob { Id = "1" } };
         var service = new BackupService(jobs);
 
-        service.BackupJobs.Add(new BackupJob { Id = 2 });
+        service.BackupJobs.Add(new BackupJob { Id = "2" });
 
         Assert.HasCount(2, service.BackupJobs);
     }
@@ -88,18 +88,18 @@ public class BackupServiceTests
     [TestMethod]
     public void BackupJobs_CanBeReplaced()
     {
-        var jobs = new List<BackupJob> { new BackupJob { Id = 1 } };
+        var jobs = new List<BackupJob> { new BackupJob { Id = "1" } };
         var service = new BackupService(jobs);
 
         service.BackupJobs = new List<BackupJob>
         {
-            new BackupJob { Id = 3 },
-            new BackupJob { Id = 4 },
-            new BackupJob { Id = 5 }
+            new BackupJob { Id = "3" },
+            new BackupJob { Id = "4" },
+            new BackupJob { Id = "5" }
         };
 
         Assert.HasCount(3, service.BackupJobs);
-        Assert.AreEqual(3, service.BackupJobs[0].Id);
+        Assert.AreEqual("3", service.BackupJobs[0].Id);
     }
 
     [TestMethod]
@@ -109,9 +109,9 @@ public class BackupServiceTests
         // Using empty Sources/Targets to prevent actual file operations.
         var jobs = new List<BackupJob>
         {
-            new BackupJob { Id = 201, Timing = "0 0 0 1 1 ? 2099", Sources = new List<string>(), Targets = new List<string>() },
-            new BackupJob { Id = 202, Timing = "0 0 0 1 1 ? 2099", Sources = new List<string>(), Targets = new List<string>() },
-            new BackupJob { Id = 203, Timing = "0 0 0 1 1 ? 2099", Sources = new List<string>(), Targets = new List<string>() }
+            new BackupJob { Id = "201", Timing = "0 0 0 1 1 ? 2099", Sources = new List<string>(), Targets = new List<string>() },
+            new BackupJob { Id = "202", Timing = "0 0 0 1 1 ? 2099", Sources = new List<string>(), Targets = new List<string>() },
+            new BackupJob { Id = "203", Timing = "0 0 0 1 1 ? 2099", Sources = new List<string>(), Targets = new List<string>() }
         };
         var service = new BackupService(jobs);
 
@@ -124,9 +124,9 @@ public class BackupServiceTests
     {
         var jobs = new List<BackupJob>
         {
-            new BackupJob { Id = 301, Timing = "0 0 0 1 1 ? 2099", Sources = new List<string>(), Targets = new List<string>() },
+            new BackupJob { Id = "301", Timing = "0 0 0 1 1 ? 2099", Sources = new List<string>(), Targets = new List<string>() },
             null!,
-            new BackupJob { Id = 303, Timing = "0 0 0 1 1 ? 2099", Sources = new List<string>(), Targets = new List<string>() }
+            new BackupJob { Id = "303", Timing = "0 0 0 1 1 ? 2099", Sources = new List<string>(), Targets = new List<string>() }
         };
         var service = new BackupService(jobs);
 
@@ -140,7 +140,7 @@ public class BackupServiceTests
         // Use a far-future cron that will never trigger to avoid file locking issues
         var jobs = new List<BackupJob>
         {
-            new BackupJob { Id = 999, Timing = "0 0 0 1 1 ? 2099", Sources = new List<string>(), Targets = new List<string>() }
+            new BackupJob { Id = "999", Timing = "0 0 0 1 1 ? 2099", Sources = new List<string>(), Targets = new List<string>() }
         };
         var service = new BackupService(jobs);
 
@@ -157,20 +157,20 @@ public class BackupServiceTests
     {
         var jobs = new List<BackupJob>
         {
-            new BackupJob { Id = 5 },
-            new BackupJob { Id = 3 },
-            new BackupJob { Id = 1 },
-            new BackupJob { Id = 4 },
-            new BackupJob { Id = 2 }
+            new BackupJob { Id = "5" },
+            new BackupJob { Id = "3" },
+            new BackupJob { Id = "1" },
+            new BackupJob { Id = "4" },
+            new BackupJob { Id = "2" }
         };
 
         var service = new BackupService(jobs);
 
-        Assert.AreEqual(5, service.BackupJobs[0].Id);
-        Assert.AreEqual(3, service.BackupJobs[1].Id);
-        Assert.AreEqual(1, service.BackupJobs[2].Id);
-        Assert.AreEqual(4, service.BackupJobs[3].Id);
-        Assert.AreEqual(2, service.BackupJobs[4].Id);
+        Assert.AreEqual("5", service.BackupJobs[0].Id);
+        Assert.AreEqual("3", service.BackupJobs[1].Id);
+        Assert.AreEqual("1", service.BackupJobs[2].Id);
+        Assert.AreEqual("4", service.BackupJobs[3].Id);
+        Assert.AreEqual("2", service.BackupJobs[4].Id);
     }
 
     [TestMethod]
@@ -179,9 +179,9 @@ public class BackupServiceTests
         // Use far-future cron times to avoid actual execution and file locking
         var jobs = new List<BackupJob>
         {
-            new BackupJob { Id = 101, Method = BackupMethod.Full, Timing = "0 0 0 1 1 ? 2099", Sources = new List<string>(), Targets = new List<string>() },
-            new BackupJob { Id = 102, Method = BackupMethod.Differential, Timing = "0 0 0 1 1 ? 2099", Sources = new List<string>(), Targets = new List<string>() },
-            new BackupJob { Id = 103, Method = BackupMethod.Incremental, Timing = "0 0 0 1 1 ? 2099", Sources = new List<string>(), Targets = new List<string>() }
+            new BackupJob { Id = "101", Method = BackupMethod.Full, Timing = "0 0 0 1 1 ? 2099", Sources = new List<string>(), Targets = new List<string>() },
+            new BackupJob { Id = "102", Method = BackupMethod.Differential, Timing = "0 0 0 1 1 ? 2099", Sources = new List<string>(), Targets = new List<string>() },
+            new BackupJob { Id = "103", Method = BackupMethod.Incremental, Timing = "0 0 0 1 1 ? 2099", Sources = new List<string>(), Targets = new List<string>() }
         };
         var service = new BackupService(jobs);
 
