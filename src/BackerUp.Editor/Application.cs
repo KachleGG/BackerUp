@@ -14,6 +14,7 @@ namespace BackerUp.Editor
     {
         public List<BackupJob> Jobs { get; set; }
         public Stack<Window> windows { get; set; }
+        public bool NeedsRedraw { get; set; } = true;
 
         public Application()
         {
@@ -100,13 +101,19 @@ namespace BackerUp.Editor
                 if (windows.Count == 0)
                     break;
 
-                windows.Peek().Draw();
+                if (NeedsRedraw)
+                {
+                    windows.Peek().Draw();
+                    NeedsRedraw = false;
+                }
+
                 this.HandleKey(Console.ReadKey());
             }
         }
 
         public void HandleKey(ConsoleKeyInfo key)
         {
+            NeedsRedraw = true;
             windows.Peek().HandleKey(key);
         }
 
@@ -114,12 +121,14 @@ namespace BackerUp.Editor
         {
             window.Application = this;
             windows.Push(window);
+            NeedsRedraw = true;
         }
 
         public void CloseWindow()
         {
             if (windows.Count > 0)
                 windows.Pop();
+            NeedsRedraw = true;
         }
     }
 }

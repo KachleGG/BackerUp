@@ -37,8 +37,8 @@ namespace BackerUp.Editor.UI.Windows
 
             Pairs = new Dictionary<ConsoleKey, Action>
             {
-                { ConsoleKey.UpArrow, () => MoveSelection(SelectedComponent - 1) },
-                { ConsoleKey.DownArrow, () => MoveSelection(SelectedComponent + 1) },
+                { ConsoleKey.UpArrow, () => { MoveSelection(SelectedComponent - 1); Application.NeedsRedraw = false; } },
+                { ConsoleKey.DownArrow, () => { MoveSelection(SelectedComponent + 1); Application.NeedsRedraw = false; } },
                 { ConsoleKey.Delete, () => RemoveSelected() },
                 { ConsoleKey.Tab, () => OnTab?.Invoke() },
                 { ConsoleKey.Escape, () => OnEscape?.Invoke() },

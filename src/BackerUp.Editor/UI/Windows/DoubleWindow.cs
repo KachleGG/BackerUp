@@ -22,6 +22,7 @@ namespace BackerUp.Editor.UI.Windows
 
             if (LeftWindow != null)
             {
+                LeftWindow.Application = Application;
                 LeftWindow.IsActive = ActivePane == Pane.Left;
                 LeftWindow.DrawsBorder = false;
                 LeftWindow.OffsetX = 0;
@@ -31,6 +32,7 @@ namespace BackerUp.Editor.UI.Windows
 
             if (RightWindow != null)
             {
+                RightWindow.Application = Application;
                 RightWindow.IsActive = ActivePane == Pane.Right;
                 RightWindow.DrawsBorder = false;
                 RightWindow.OffsetX = SplitX;
@@ -70,7 +72,11 @@ namespace BackerUp.Editor.UI.Windows
         public override void HandleKey(ConsoleKeyInfo key)
         {
             var active = ActivePane == Pane.Left ? LeftWindow : RightWindow;
-            active?.HandleKey(key);
+            if (active != null)
+            {
+                active.Application = Application;
+                active.HandleKey(key);
+            }
         }
 
         public void SetRightWindow(Window window)
