@@ -1,0 +1,6 @@
+@BackerUp.Admin.Server_HostAddress = http://localhost:5110
+
+GET {{BackerUp.Admin.Server_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###

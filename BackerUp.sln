@@ -5,6 +5,7 @@ VisualStudioVersion = 18.3.11505.172
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Položky řešení", "Položky řešení", "{73E6DEBC-5D85-E032-7380-14D1E53616C6}"
 	ProjectSection(SolutionItems) = preProject
+		DbCreation.sql = DbCreation.sql
 		TODO.md = TODO.md
 	EndProjectSection
 EndProject
@@ -15,6 +16,8 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BackerUp.Core", "src\BackerUp.Core\BackerUp.Core.csproj", "{0335D7AE-8DA2-4936-AE37-9B33FA23265B}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BackerUp.Tests", "src\BackerUp.Tests\BackerUp.Tests.csproj", "{25673944-65CD-49C2-AE72-353B3087AABC}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BackerUp.Admin.Server", "BackerUp.Admin.Server\BackerUp.Admin.Server.csproj", "{3E333399-9269-4F58-9DBF-BE948C9A8503}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -38,6 +41,10 @@ Global
 		{25673944-65CD-49C2-AE72-353B3087AABC}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{25673944-65CD-49C2-AE72-353B3087AABC}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{25673944-65CD-49C2-AE72-353B3087AABC}.Release|Any CPU.Build.0 = Release|Any CPU
+		{3E333399-9269-4F58-9DBF-BE948C9A8503}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3E333399-9269-4F58-9DBF-BE948C9A8503}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3E333399-9269-4F58-9DBF-BE948C9A8503}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3E333399-9269-4F58-9DBF-BE948C9A8503}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
