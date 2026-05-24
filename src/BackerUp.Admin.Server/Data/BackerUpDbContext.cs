@@ -5,8 +5,9 @@ namespace BackerUp.Admin.Server.Data
 {
     public class BackerUpDbContext : DbContext
     {
-        public BackerUpDbContext(DbContextOptions<BackerUpDbContext> options) : base(options)
+        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
+            optionsBuilder.UseMySQL("server=mysqlstudenti.litv.sssvt.cz;database=3b1_kachlikmarek_db1;user=kachlikmarek;password=123456");
         }
 
         public DbSet<BackupJob> BackupJobs { get; set; }

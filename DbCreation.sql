@@ -1,8 +1,5 @@
-﻿-- Create database (optional)
-CREATE DATABASE IF NOT EXISTS backup_system;
-USE backup_system;
-
--- Enums (implemented as ENUM columns in MySQL)
+﻿-- Use existing database (no CREATE DATABASE allowed)
+USE 3b1_kachlikmarek_db1;
 
 -- BackupJobs
 CREATE TABLE BackupJobs (

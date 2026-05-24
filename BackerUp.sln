@@ -17,7 +17,28 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BackerUp.Core", "src\Backer
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BackerUp.Tests", "src\BackerUp.Tests\BackerUp.Tests.csproj", "{25673944-65CD-49C2-AE72-353B3087AABC}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BackerUp.Admin.Server", "BackerUp.Admin.Server\BackerUp.Admin.Server.csproj", "{3E333399-9269-4F58-9DBF-BE948C9A8503}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BackerUp.Admin.Server", "src\BackerUp.Admin.Server\BackerUp.Admin.Server.csproj", "{3E333399-9269-4F58-9DBF-BE948C9A8503}"
+EndProject
+Project("{E24C65DC-7377-472B-9ABA-BC803B73C61A}") = "BackerUp.Admin.Frontend", "src\BackerUp.Admin.Frontend\", "{C726C962-CC1F-4738-2354-56EADB80D989}"
+	ProjectSection(WebsiteProperties) = preProject
+		TargetFrameworkMoniker = ".NETFramework,Version%3Dv4.8"
+		Debug.AspNetCompiler.VirtualPath = "/localhost_49255"
+		Debug.AspNetCompiler.PhysicalPath = "src\BackerUp.Admin.Frontend\"
+		Debug.AspNetCompiler.TargetPath = "PrecompiledWeb\localhost_49255\"
+		Debug.AspNetCompiler.Updateable = "true"
+		Debug.AspNetCompiler.ForceOverwrite = "true"
+		Debug.AspNetCompiler.FixedNames = "false"
+		Debug.AspNetCompiler.Debug = "True"
+		Release.AspNetCompiler.VirtualPath = "/localhost_49255"
+		Release.AspNetCompiler.PhysicalPath = "src\BackerUp.Admin.Frontend\"
+		Release.AspNetCompiler.TargetPath = "PrecompiledWeb\localhost_49255\"
+		Release.AspNetCompiler.Updateable = "true"
+		Release.AspNetCompiler.ForceOverwrite = "true"
+		Release.AspNetCompiler.FixedNames = "false"
+		Release.AspNetCompiler.Debug = "False"
+		VWDPort = "49255"
+		SlnRelativePath = "src\BackerUp.Admin.Frontend\"
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -45,6 +66,10 @@ Global
 		{3E333399-9269-4F58-9DBF-BE948C9A8503}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{3E333399-9269-4F58-9DBF-BE948C9A8503}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{3E333399-9269-4F58-9DBF-BE948C9A8503}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C726C962-CC1F-4738-2354-56EADB80D989}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C726C962-CC1F-4738-2354-56EADB80D989}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C726C962-CC1F-4738-2354-56EADB80D989}.Release|Any CPU.ActiveCfg = Debug|Any CPU
+		{C726C962-CC1F-4738-2354-56EADB80D989}.Release|Any CPU.Build.0 = Debug|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
