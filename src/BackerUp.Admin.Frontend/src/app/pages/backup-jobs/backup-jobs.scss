@@ -1,0 +1,45 @@
+.wrapper {
+	max-width: 100%;
+}
+
+.page-card {
+	overflow: hidden;
+}
+
+.page-kicker {
+	color: var(--app-muted);
+	font-size: 0.8rem;
+	font-weight: 700;
+	letter-spacing: 0.08em;
+	text-transform: uppercase;
+}
+
+.page-title {
+	margin: 0;
+}
+
+.page-subtitle {
+	color: var(--app-muted);
+}
+
+.section-card {
+	padding: 1.25rem;
+	border: 1px solid var(--app-border);
+	border-radius: 1rem;
+	background: #fff;
+}
+
+.section-title {
+	margin: 0;
+	font-weight: 700;
+}
+
+.list-row {
+	display: flex;
+	gap: 0.75rem;
+	align-items: center;
+
+	.form-control {
+		flex: 1;
+	}
+}

@@ -1,0 +1,31 @@
+<div class="wrapper container-xxl py-3">
+  <div class="page-card p-4 mb-4">
+    <h2 class="page-heading mb-0">Logs</h2>
+  </div>
+  <div class="page-card p-3 p-lg-4">
+    <div class="table-responsive">
+      <table class="table table-sm table-hover align-middle mb-0">
+    <thead>
+      <tr>
+        <th>Id</th>
+        <th>Jobs Client Id</th>
+        <th>Level</th>
+        <th>Description</th>
+        <th>Created At</th>
+      </tr>
+    </thead>
+    <tbody>
+      @for (log of logs; track log.id) {
+        <tr>
+          <td>{{ log.id }}</td>
+          <td>{{ log.jobsClientsId }}</td>
+          <td>{{ log.level }}</td>
+          <td>{{ log.description }}</td>
+          <td>{{ log.createdAt | date:'short' }}</td>
+        </tr>
+      }
+    </tbody>
+      </table>
+    </div>
+  </div>
+</div>

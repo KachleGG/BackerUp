@@ -24,7 +24,8 @@ namespace BackerUp.Admin.Server.Controllers
                 Id = c.Id,
                 Name = c.Name,
                 IsActive = c.IsActive,
-                CreatedAt = c.CreatedAt
+                CreatedAt = c.CreatedAt,
+                JobIds = c.JobClients.Select(jc => jc.JobId).ToList()
             }).ToList();
 
             return Ok(clients);
@@ -33,10 +34,21 @@ namespace BackerUp.Admin.Server.Controllers
         [HttpGet("{id}")]
         public IActionResult GetById(Guid id)
         {
-            var client = _db.Clients.Find(id);
+            var client = _db.Clients
+                .Where(c => c.Id == id)
+                .Select(c => new ClientResponse
+                {
+                    Id = c.Id,
+                    Name = c.Name,
+                    IsActive = c.IsActive,
+                    CreatedAt = c.CreatedAt,
+                    JobIds = c.JobClients.Select(jc => jc.JobId).ToList()
+                })
+                .FirstOrDefault();
+
             if (client == null) return NotFound();
 
-            return Ok(new ClientResponse { Id = client.Id, Name = client.Name, IsActive = client.IsActive, CreatedAt = client.CreatedAt });
+            return Ok(client);
         }
 
         [HttpPost]
@@ -49,11 +61,30 @@ namespace BackerUp.Admin.Server.Controllers
                 IsActive = request.IsActive,
                 CreatedAt = DateTime.UtcNow
             };
-
             _db.Clients.Add(client);
             _db.SaveChanges();
 
-            return CreatedAtAction(nameof(GetById), new { id = client.Id }, new ClientResponse { Id = client.Id, Name = client.Name, IsActive = client.IsActive, CreatedAt = client.CreatedAt });
+            // handle job links
+            if (request.JobIds != null)
+            {
+                foreach (var jid in request.JobIds)
+                {
+                    if (_db.BackupJobs.Any(j => j.Id == jid))
+                    {
+                        _db.JobsClients.Add(new JobClient { JobId = jid, ClientId = client.Id, IsActive = true });
+                    }
+                }
+                _db.SaveChanges();
+            }
+
+            return CreatedAtAction(nameof(GetById), new { id = client.Id }, new ClientResponse
+            {
+                Id = client.Id,
+                Name = client.Name,
+                IsActive = client.IsActive,
+                CreatedAt = client.CreatedAt,
+                JobIds = request.JobIds ?? new List<int>()
+            });
         }
 
         [HttpPut("{id}")]
@@ -64,6 +95,20 @@ namespace BackerUp.Admin.Server.Controllers
 
             client.Name = request.Name;
             client.IsActive = request.IsActive;
+
+            // update job links: replace existing links with new set
+            if (request.JobIds != null)
+            {
+                var existing = _db.JobsClients.Where(jc => jc.ClientId == id).ToList();
+                _db.JobsClients.RemoveRange(existing);
+                foreach (var jid in request.JobIds)
+                {
+                    if (_db.BackupJobs.Any(j => j.Id == jid))
+                    {
+                        _db.JobsClients.Add(new JobClient { JobId = jid, ClientId = id, IsActive = true });
+                    }
+                }
+            }
 
             _db.SaveChanges();
             return NoContent();

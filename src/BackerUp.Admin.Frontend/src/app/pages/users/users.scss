@@ -1,0 +1,23 @@
+.wrapper {
+	max-width: 100%;
+}
+
+.page-card {
+	overflow: hidden;
+}
+
+.page-kicker {
+	color: var(--app-muted);
+	font-size: 0.8rem;
+	font-weight: 700;
+	letter-spacing: 0.08em;
+	text-transform: uppercase;
+}
+
+.page-title {
+	margin: 0;
+}
+
+.page-subtitle {
+	color: var(--app-muted);
+}

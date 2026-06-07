@@ -1,0 +1,23 @@
+<div class="wrapper">
+  <h2>Add Log</h2>
+  <form (ngSubmit)="save()">
+    <div>
+      <label>Job Client Id</label>
+      <input type="number" [(ngModel)]="jobsClientsId" name="jobsClientsId" required />
+    </div>
+    <div>
+      <label>Level</label>
+      <select [(ngModel)]="level" name="level" required>
+        @for (l of levels; track l) {
+          <option [value]="l">{{ l }}</option>
+        }
+      </select>
+    </div>
+    <div>
+      <label>Description</label>
+      <textarea [(ngModel)]="description" name="description" required></textarea>
+    </div>
+    <button type="submit">Save</button>
+    <button type="button" (click)="cancel()">Cancel</button>
+  </form>
+</div>

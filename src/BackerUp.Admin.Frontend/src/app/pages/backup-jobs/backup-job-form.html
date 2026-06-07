@@ -1,0 +1,85 @@
+<div class="wrapper container-xxl py-4">
+  <form (ngSubmit)="save()" class="page-card p-4 p-lg-5">
+    <div class="mb-4">
+      <p class="page-kicker mb-1">Backup jobs</p>
+      <h1 class="page-title h3 mb-1">{{ isEdit ? 'Edit Backup Job' : 'Add Backup Job' }}</h1>
+    </div>
+
+    <div class="row g-4">
+      <div class="col-lg-4">
+        <div class="section-card h-100">
+          <h2 class="section-title h6 mb-3">Job basics</h2>
+          <div class="mb-3">
+            <label class="form-label">Method</label>
+            <select class="form-select" [(ngModel)]="method" name="method" required>
+              @for (m of methods; track m) {
+                <option [value]="m">{{ m }}</option>
+              }
+            </select>
+          </div>
+          <div class="mb-0">
+            <label class="form-label">Timing</label>
+            <input class="form-control" type="text" [(ngModel)]="timing" name="timing" required placeholder="e.g. 0 2 * * *" />
+          </div>
+        </div>
+      </div>
+
+      <div class="col-lg-8">
+        <div class="section-card mb-4">
+          <div class="d-flex align-items-center justify-content-between mb-3">
+            <div>
+              <h2 class="section-title h6 mb-1">Sources</h2>
+            </div>
+            <button class="btn btn-sm btn-outline-primary" type="button" (click)="addSource()">Add source</button>
+          </div>
+
+          <div class="d-grid gap-2">
+            @for (src of sources; track trackByIndex($index)) {
+              <div class="list-row">
+                <input class="form-control" type="text" [(ngModel)]="sources[$index]" [name]="'source_' + $index" placeholder="Source path" />
+                <button class="btn btn-outline-secondary" type="button" (click)="removeSource($index)" [disabled]="sources.length === 1">Remove</button>
+              </div>
+            }
+          </div>
+        </div>
+
+        <div class="section-card mb-4">
+          <div class="d-flex align-items-center justify-content-between mb-3">
+            <div>
+              <h2 class="section-title h6 mb-1">Targets</h2>
+            </div>
+            <button class="btn btn-sm btn-outline-primary" type="button" (click)="addTarget()">Add target</button>
+          </div>
+
+          <div class="d-grid gap-2">
+            @for (tgt of targets; track trackByIndex($index)) {
+              <div class="list-row">
+                <input class="form-control" type="text" [(ngModel)]="targets[$index]" [name]="'target_' + $index" placeholder="Target path" />
+                <button class="btn btn-outline-secondary" type="button" (click)="removeTarget($index)" [disabled]="targets.length === 1">Remove</button>
+              </div>
+            }
+          </div>
+        </div>
+
+        <div class="section-card">
+          <h2 class="section-title h6 mb-3">Retention</h2>
+          <div class="row g-3">
+            <div class="col-md-6">
+              <label class="form-label">Count</label>
+              <input class="form-control" type="number" [(ngModel)]="retention.count" name="retentionCount" min="0" />
+            </div>
+            <div class="col-md-6">
+              <label class="form-label">Size</label>
+              <input class="form-control" type="number" [(ngModel)]="retention.size" name="retentionSize" min="0" />
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="d-flex gap-2 justify-content-end mt-4">
+      <button class="btn btn-outline-secondary" type="button" (click)="cancel()">Cancel</button>
+      <button class="btn btn-primary" type="submit">Save backup job</button>
+    </div>
+  </form>
+</div>

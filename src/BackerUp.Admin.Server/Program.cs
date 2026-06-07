@@ -4,6 +4,7 @@ using BackerUp.Admin.Server.Models.Entities;
 using Microsoft.EntityFrameworkCore;
 using System.Security.Cryptography;
 using System.Text;
+using System.Text.Json.Serialization;
 
 namespace BackerUp.Admin.Server
 {
@@ -21,7 +22,8 @@ namespace BackerUp.Admin.Server
                 options.AddDefaultPolicy(policy =>
                     policy.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader());
             });
-            builder.Services.AddControllers();
+            builder.Services.AddControllers()
+                .AddJsonOptions(o => o.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter()));
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();

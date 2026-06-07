@@ -1,0 +1,90 @@
+<div class="wrapper container-xxl py-4">
+  <form (ngSubmit)="save()" class="page-card p-4 p-lg-5">
+    <div class="d-flex align-items-start justify-content-between gap-3 mb-4">
+      <div>
+        <p class="page-kicker mb-1">Clients</p>
+        <h1 class="page-title h3 mb-1">{{ isEdit ? 'Edit Client' : 'Add Client' }}</h1>
+      </div>
+      <div class="status-pill" [class.status-pill--on]="isActive">
+        {{ isActive ? 'Active' : 'Inactive' }}
+      </div>
+    </div>
+
+    <div class="row g-4">
+      <div class="col-lg-5">
+        <div class="section-card">
+          <h2 class="section-title h6 mb-3">Client details</h2>
+          <div class="mb-3">
+            <label class="form-label">Name</label>
+            <input class="form-control form-control-lg" type="text" [(ngModel)]="name" name="name" required />
+          </div>
+          <div class="form-check form-switch">
+            <input class="form-check-input" type="checkbox" [(ngModel)]="isActive" name="isActive" id="clientActive" />
+            <label class="form-check-label" for="clientActive">Active client</label>
+          </div>
+        </div>
+
+        <div class="section-card mt-4">
+          <div class="d-flex align-items-center justify-content-between mb-2">
+            <h2 class="section-title h6 mb-0">Selected jobs</h2>
+            <button class="btn btn-link btn-sm p-0 text-decoration-none" type="button" (click)="clearJobs()">Clear</button>
+          </div>
+          @if (selectedJobs.length) {
+            <div class="selected-list d-grid gap-2">
+              @for (job of selectedJobs; track job.id) {
+                <div class="selected-item">
+                  <div class="fw-medium">{{ job.method }}</div>
+                  <div class="text-secondary small">{{ job.timing }}</div>
+                </div>
+              }
+            </div>
+          } @else {
+            <div class="empty-state">No jobs selected yet.</div>
+          }
+        </div>
+      </div>
+
+      <div class="col-lg-7">
+        <div class="section-card h-100">
+          <div class="d-flex align-items-center justify-content-between mb-3">
+            <div>
+              <h2 class="section-title h6 mb-1">Backup jobs</h2>
+            </div>
+            <span class="text-secondary small">{{ selectedJobIds.length }} selected</span>
+          </div>
+
+          @if (jobsLoading) {
+            <div class="empty-state">Loading backup jobs...</div>
+          } @else {
+            <div class="job-grid">
+              @for (job of jobs; track job.id) {
+                <label class="job-card" [class.job-card--selected]="isSelected(job.id)">
+                  <input class="form-check-input job-card-check" type="checkbox" [checked]="isSelected(job.id)" (change)="toggleJob(job.id)" />
+                  <div class="job-card-content">
+                    <div class="d-flex align-items-center justify-content-between gap-3">
+                      <div>
+                        <div class="fw-semibold">{{ job.method }}</div>
+                        <div class="text-secondary small">{{ job.timing }}</div>
+                      </div>
+                      <span class="job-badge">#{{ job.id }}</span>
+                    </div>
+                    <div class="text-secondary small mt-2">
+                      <span>{{ job.sources.length }} sources</span>
+                      <span class="mx-2">·</span>
+                      <span>{{ job.targets.length }} targets</span>
+                    </div>
+                  </div>
+                </label>
+              }
+            </div>
+          }
+        </div>
+      </div>
+    </div>
+
+    <div class="d-flex gap-2 justify-content-end mt-4">
+      <button class="btn btn-outline-secondary" type="button" (click)="cancel()">Cancel</button>
+      <button class="btn btn-primary" type="submit">Save client</button>
+    </div>
+  </form>
+</div>
