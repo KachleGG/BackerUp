@@ -9,8 +9,7 @@ namespace BackerUp.Client
         static async Task Main(string[] args)
         {
             Console.CursorVisible = false;
-            // Load jobs from BackerUp.conf in appdata folder
-            BackupService backupService = new(Config.GetJobs());
+            var registerService = new RegisterService();
 
             LoggerService.Log("Backup Client Started");
 
@@ -18,12 +17,22 @@ namespace BackerUp.Client
             {
                 try
                 {
-                    LoggerService.Log("Running backup service");
-                    await backupService.RunAsync();
+                    bool canRunBackups = await registerService.RunOnceAsync();
+
+                    if (canRunBackups)
+                    {
+                        BackupService backupService = new(Config.GetJobs());
+                        LoggerService.Log("Running backup service");
+                        await backupService.RunAsync();
+                    }
+                    else
+                    {
+                        LoggerService.Log("Client is not approved; skipping backup run");
+                    }
 #if DEBUG
                     await Task.Delay(TimeSpan.FromSeconds(5));
 #else
-                await Task.Delay(TimeSpan.FromMinutes(1));
+                    await Task.Delay(TimeSpan.FromMinutes(1));
 #endif
                 }
                 catch (Exception ex)

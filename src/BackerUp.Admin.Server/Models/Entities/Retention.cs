@@ -2,6 +2,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace BackerUp.Admin.Server.Models.Entities
 {
+    [Table("Retentions")]
     public class Retention
     {
         [Column("id")]

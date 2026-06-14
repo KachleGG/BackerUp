@@ -1,9 +1,11 @@
-namespace BackerUp.Core.DTOs
+using BackerUp.Admin.Server.Models.Enums;
+
+namespace BackerUp.Admin.Server.Models.DTOs
 {
-    public class BackupJobDto
+    public class BackupJobResponse
     {
         public int Id { get; set; }
-        public string Method { get; set; } = string.Empty;
+        public BackupMethod Method { get; set; }
         public string Timing { get; set; } = string.Empty;
         public DateTime CreatedAt { get; set; }
         public List<string> Sources { get; set; } = new();

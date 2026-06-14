@@ -1,16 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Text.Json;
+﻿using System.Text.Json;
 using System.Text.Json.Serialization;
-using System.Threading.Tasks;
 
 namespace BackerUp.Core.Models
 {
     public class Config
     {
-        
         public static List<BackupJob> GetJobs()
         {
             EnsureAppData();
@@ -22,6 +16,39 @@ namespace BackerUp.Core.Models
             catch (Exception ex)
             {
                 return new List<BackupJob>();
+            }
+        }
+
+        public static Guid GetClientId()
+        {
+            EnsureAppData();
+            var path = Path.Combine(AppConstants.AppDataFolderPath, "client.id");
+            try
+            {
+                if (File.Exists(path))
+                {
+                    var txt = File.ReadAllText(path).Trim();
+                    if (Guid.TryParse(txt, out var g)) return g;
+                }
+            }
+            catch (Exception ex)
+            {
+                LoggerService.Log($"GetClientId error: {ex.Message}");
+            }
+            return Guid.Empty;
+        }
+
+        public static void SaveClientId(Guid id)
+        {
+            EnsureAppData();
+            var path = Path.Combine(AppConstants.AppDataFolderPath, "client.id");
+            try
+            {
+                File.WriteAllText(path, id.ToString());
+            }
+            catch (Exception ex)
+            {
+                LoggerService.Log($"SaveClientId error: {ex.Message}");
             }
         }
 
@@ -47,9 +74,10 @@ namespace BackerUp.Core.Models
                     File.WriteAllText(AppConstants.ConfigFilePath, "[]");
                 }
             }
-            catch (Exception ex) {
+            catch (Exception ex)
+            {
                 LoggerService.Log($"There was an error with the local appdata folder: {ex.Message}");
             }
-        }        
+        }
     }
 }

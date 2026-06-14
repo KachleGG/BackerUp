@@ -1,12 +1,6 @@
 ﻿using BackerUp.Core.Models;
-using BackerUp.Editor.Services;
 using BackerUp.Editor.UI.Components;
 using BackerUp.Editor.UI.Enums;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace BackerUp.Editor.UI.Windows
 {
@@ -17,49 +11,61 @@ namespace BackerUp.Editor.UI.Windows
         {
             IdBox = new TextBox { Label = "ID", Value = Config.GetJobs().Count.ToString() };
 
-            SourcesList = new ListSelection { Label = "Sources", Values = new List<string>(), OnPress = () => {
-                var doubleWindow = new DoubleWindow();
-                var dirSelectionWindow = new DirSelectionWindow(SourcesList.Values);
-                var dirListingWindow = new DirListingWindow(SourcesList.Values);
+            SourcesList = new ListSelection
+            {
+                Label = "Sources",
+                Values = new List<string>(),
+                OnPress = () =>
+                {
+                    var doubleWindow = new DoubleWindow();
+                    var dirSelectionWindow = new DirSelectionWindow(SourcesList.Values);
+                    var dirListingWindow = new DirListingWindow(SourcesList.Values);
 
-                dirSelectionWindow.Initialize();
-                dirListingWindow.Initialize();
+                    dirSelectionWindow.Initialize();
+                    dirListingWindow.Initialize();
 
-                dirSelectionWindow.OnTab = () => doubleWindow.ActivePane = Pane.Right;
-                dirListingWindow.OnTab = () => doubleWindow.ActivePane = Pane.Left;
-                dirSelectionWindow.OnDirsChanged = () => dirListingWindow.Refresh();
-                dirSelectionWindow.OnEscape = () => Application.CloseWindow();
-                dirListingWindow.OnEscape = () => Application.CloseWindow();
-                dirListingWindow.OnEnter = () => Application.CloseWindow();
+                    dirSelectionWindow.OnTab = () => doubleWindow.ActivePane = Pane.Right;
+                    dirListingWindow.OnTab = () => doubleWindow.ActivePane = Pane.Left;
+                    dirSelectionWindow.OnDirsChanged = () => dirListingWindow.Refresh();
+                    dirSelectionWindow.OnEscape = () => Application.CloseWindow();
+                    dirListingWindow.OnEscape = () => Application.CloseWindow();
+                    dirListingWindow.OnEnter = () => Application.CloseWindow();
 
-                doubleWindow.LeftWindow = dirSelectionWindow;
-                doubleWindow.RightWindow = dirListingWindow;
-                doubleWindow.ActivePane = Pane.Left;
+                    doubleWindow.LeftWindow = dirSelectionWindow;
+                    doubleWindow.RightWindow = dirListingWindow;
+                    doubleWindow.ActivePane = Pane.Left;
 
-                Application.OpenWindow(doubleWindow);
-            } };
+                    Application.OpenWindow(doubleWindow);
+                }
+            };
 
-            TargetsList = new ListSelection { Label = "Targets", Values = new List<string>(), OnPress = () => {
-                var doubleWindow = new DoubleWindow();
-                var dirSelectionWindow = new DirSelectionWindow(TargetsList.Values);
-                var dirListingWindow = new DirListingWindow(TargetsList.Values);
+            TargetsList = new ListSelection
+            {
+                Label = "Targets",
+                Values = new List<string>(),
+                OnPress = () =>
+                {
+                    var doubleWindow = new DoubleWindow();
+                    var dirSelectionWindow = new DirSelectionWindow(TargetsList.Values);
+                    var dirListingWindow = new DirListingWindow(TargetsList.Values);
 
-                dirSelectionWindow.Initialize();
-                dirListingWindow.Initialize();
+                    dirSelectionWindow.Initialize();
+                    dirListingWindow.Initialize();
 
-                dirSelectionWindow.OnTab = () => doubleWindow.ActivePane = Pane.Right;
-                dirListingWindow.OnTab = () => doubleWindow.ActivePane = Pane.Left;
-                dirSelectionWindow.OnDirsChanged = () => dirListingWindow.Refresh();
-                dirSelectionWindow.OnEscape = () => Application.CloseWindow();
-                dirListingWindow.OnEscape = () => Application.CloseWindow();
-                dirListingWindow.OnEnter = () => Application.CloseWindow();
+                    dirSelectionWindow.OnTab = () => doubleWindow.ActivePane = Pane.Right;
+                    dirListingWindow.OnTab = () => doubleWindow.ActivePane = Pane.Left;
+                    dirSelectionWindow.OnDirsChanged = () => dirListingWindow.Refresh();
+                    dirSelectionWindow.OnEscape = () => Application.CloseWindow();
+                    dirListingWindow.OnEscape = () => Application.CloseWindow();
+                    dirListingWindow.OnEnter = () => Application.CloseWindow();
 
-                doubleWindow.LeftWindow = dirSelectionWindow;
-                doubleWindow.RightWindow = dirListingWindow;
-                doubleWindow.ActivePane = Pane.Left;
+                    doubleWindow.LeftWindow = dirSelectionWindow;
+                    doubleWindow.RightWindow = dirListingWindow;
+                    doubleWindow.ActivePane = Pane.Left;
 
-                Application.OpenWindow(doubleWindow);
-            } };
+                    Application.OpenWindow(doubleWindow);
+                }
+            };
             MethodBox = new OptionBox
             {
                 Label = "Method",

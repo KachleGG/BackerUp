@@ -13,6 +13,7 @@ import { Client } from '../../models/client.model';
 })
 export class Clients implements OnInit {
   clients: WritableSignal<Client[]> = signal<Client[]>([]);
+  viewingPending = false;
 
   trackById(index: number, item: Client) { return item.id; }
 
@@ -26,6 +27,16 @@ export class Clients implements OnInit {
     this.clientsService.getAll().subscribe(data => this.clients.set(data));
   }
 
+  loadPending(): void {
+    this.clientsService.getPending().subscribe(data => this.clients.set(data));
+  }
+
+  togglePending(): void {
+    this.viewingPending = !this.viewingPending;
+    if (this.viewingPending) this.loadPending();
+    else this.load();
+  }
+
   add(): void {
     this.router.navigate(['/clients/add']);
   }
@@ -37,6 +48,11 @@ export class Clients implements OnInit {
   delete(id: string): void {
     if (!confirm('Are you sure you want to delete this client?')) return;
     this.clientsService.delete(id).subscribe(() => this.clients.update(list => list.filter(c => c.id !== id)));
+  }
+
+  approve(id: string): void {
+    if (!confirm('Approve this client?')) return;
+    this.clientsService.approve(id).subscribe(() => this.clients.update(list => list.filter(c => c.id !== id)));
   }
 }
 

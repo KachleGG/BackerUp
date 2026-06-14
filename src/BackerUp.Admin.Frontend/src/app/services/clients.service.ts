@@ -19,7 +19,16 @@ export class ClientsService {
   }
 
   create(request: CreateClientRequest): Observable<Client> {
-    return this.http.post<Client>(this.url, request);
+    // Backend exposes a dedicated register endpoint
+    return this.http.post<Client>(`${this.url}/register`, request);
+  }
+
+  getPending(): Observable<Client[]> {
+    return this.http.get<Client[]>(`${this.url}/pending`);
+  }
+
+  approve(id: string): Observable<void> {
+    return this.http.post<void>(`${this.url}/${id}/approve`, {});
   }
 
   update(id: string, request: UpdateClientRequest): Observable<void> {

@@ -7,7 +7,7 @@ public abstract class Window
     public List<Components.IComponent> Components { get; set; } = new List<Components.IComponent>();
     public int SelectedComponent { get; set; } = 0;
 
-    public Dictionary<ConsoleKey, Action> Pairs {  get; set; }
+    public Dictionary<ConsoleKey, Action> Pairs { get; set; }
 
     public int OffsetX { get; set; } = 0;
     public int OffsetY { get; set; } = 0;
@@ -92,19 +92,23 @@ public abstract class Window
     protected void DrawBorder()
     {
         Console.Write("┌");
-        for (int i = 0; i < Console.WindowWidth - 2; i++) {
+        for (int i = 0; i < Console.WindowWidth - 2; i++)
+        {
             Console.Write("─");
         }
         Console.WriteLine("┐");
-        for (int i = 0; i < Console.WindowHeight - 2; i++) {
+        for (int i = 0; i < Console.WindowHeight - 2; i++)
+        {
             Console.Write("│");
-            for (int j = 0; j < Console.WindowWidth - 2; j++) {
+            for (int j = 0; j < Console.WindowWidth - 2; j++)
+            {
                 Console.Write(" ");
             }
             Console.WriteLine("│");
         }
         Console.Write("└");
-        for (int i = 0; i < Console.WindowWidth - 2; i++) {
+        for (int i = 0; i < Console.WindowWidth - 2; i++)
+        {
             Console.Write("─");
         }
         Console.WriteLine("┘");

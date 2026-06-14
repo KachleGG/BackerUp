@@ -18,7 +18,6 @@
 
   <ItemGroup>
     <ProjectReference Include="..\BackerUp.Client\BackerUp.Client.csproj" />
-    <ProjectReference Include="..\BackerUp.Core\BackerUp.Core.csproj" />
   </ItemGroup>
 
 </Project>

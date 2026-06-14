@@ -1,13 +1,8 @@
 ﻿using BackerUp.Core.Models;
-using BackerUp.Editor.Services;
 using BackerUp.Editor.UI.Dialogues;
 using BackerUp.Editor.UI.Enums;
 using BackerUp.Editor.UI.Windows;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
 
 namespace BackerUp.Editor
 {

@@ -1,12 +1,7 @@
 using BackerUp.Core;
-using BackerUp.Core.Models;
 using BackerUp.Core.DTOs;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Net.Http;
+using BackerUp.Core.Models;
 using System.Net.Http.Json;
-using System.Threading.Tasks;
 
 namespace BackerUp.Editor.Services
 {

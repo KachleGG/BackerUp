@@ -1,16 +1,19 @@
-﻿using BackerUp.Client.Services;
-using BackerUp.Core;
+﻿using BackerUp.Core;
 using BackerUp.Core.Models;
 
 namespace BackerUp.Client.Models;
 
 public abstract class Backup
 {
-    public void Run(BackupJob job) {
+    public void Run(BackupJob job)
+    {
         JobsMetadata jobMeta = new JobsMetadata();
-        try {
+        try
+        {
             jobMeta = JobsMetadata.LoadOrCreateForJob(job);
-        } catch (Exception ex) {
+        }
+        catch (Exception ex)
+        {
             LoggerService.Log($"Problem with saving metadata for job (Id: {job.Id}): {ex.Message}");
         }
 
@@ -28,9 +31,11 @@ public abstract class Backup
         PerformBackup(job, jobMeta);
     }
 
-    public virtual void PerformBackup(BackupJob job, JobsMetadata jobMeta) {
+    public virtual void PerformBackup(BackupJob job, JobsMetadata jobMeta)
+    {
         // Default implementation performs a full backup
-        if (job == null || job.Targets == null || job.Sources == null) {
+        if (job == null || job.Targets == null || job.Sources == null)
+        {
             return;
         }
 
@@ -39,23 +44,30 @@ public abstract class Backup
         // Full backups always create a new package
         CreateNewPackageForJob(job, jobMeta);
         PackageEntry? current = jobMeta.GetCurrentPackage();
-        if (current == null) {
+        if (current == null)
+        {
             return;
         }
 
-        foreach (string target in job.Targets) {
-            try {
+        foreach (string target in job.Targets)
+        {
+            try
+            {
                 string dataDir = Path.Combine(target, current.Name, "fullBackup");
                 Directory.CreateDirectory(dataDir);
-                foreach (string src in job.Sources) {
-                    if (string.IsNullOrWhiteSpace(src)) {
+                foreach (string src in job.Sources)
+                {
+                    if (string.IsNullOrWhiteSpace(src))
+                    {
                         continue;
                     }
 
                     string dest = Path.Combine(dataDir, Path.GetFileName(src.TrimEnd(Path.DirectorySeparatorChar)));
                     CopyPathPreserve(src, dest);
                 }
-            } catch (Exception ex) {
+            }
+            catch (Exception ex)
+            {
                 LoggerService.Log($"Error copying data for full package {current.Name} into target {target}: {ex.Message}");
             }
         }
@@ -68,16 +80,21 @@ public abstract class Backup
         EnforceRetention(job, jobMeta);
     }
 
-    protected void CreateNewPackageForJob(BackupJob job, JobsMetadata jobMeta) {
+    protected void CreateNewPackageForJob(BackupJob job, JobsMetadata jobMeta)
+    {
         int pkgIndex = jobMeta.NextPackageIndex;
         string packageBase = $"package_{job.Id}_{pkgIndex}";
         DateTime now = DateTime.Now;
-        foreach (string target in job.Targets) {
-            try {
+        foreach (string target in job.Targets)
+        {
+            try
+            {
                 // Create package base directory only. The actual data will be written to the 'fullBackup' folder when a full backup runs.
                 string packageDir = Path.Combine(target, packageBase);
                 Directory.CreateDirectory(packageDir);
-            } catch (Exception ex) {
+            }
+            catch (Exception ex)
+            {
                 LoggerService.Log($"Error creating package {packageBase} in target {target}: {ex.Message}");
             }
         }
@@ -88,42 +105,56 @@ public abstract class Backup
         jobMeta.SaveToAppData();
     }
 
-    protected void CopyPathPreserve(string source, string destination) {
-        if (Directory.Exists(source)) {
-            foreach (string dirPath in Directory.GetDirectories(source, "*", SearchOption.AllDirectories)) {
+    protected void CopyPathPreserve(string source, string destination)
+    {
+        if (Directory.Exists(source))
+        {
+            foreach (string dirPath in Directory.GetDirectories(source, "*", SearchOption.AllDirectories))
+            {
                 Directory.CreateDirectory(Path.Combine(destination, Path.GetRelativePath(source, dirPath)));
             }
-            foreach (string file in Directory.GetFiles(source, "*", SearchOption.AllDirectories)) {
+            foreach (string file in Directory.GetFiles(source, "*", SearchOption.AllDirectories))
+            {
                 string rel = Path.GetRelativePath(source, file);
                 string dest = Path.Combine(destination, rel);
                 Directory.CreateDirectory(Path.GetDirectoryName(dest) ?? destination);
                 File.Copy(file, dest, overwrite: true);
             }
-        } else if (File.Exists(source)) {
+        }
+        else if (File.Exists(source))
+        {
             Directory.CreateDirectory(Path.GetDirectoryName(destination) ?? "");
             File.Copy(source, destination, overwrite: true);
         }
     }
 
-    protected void EnforceRetention(BackupJob job, JobsMetadata jobMeta) {
-        if (job.BackupRetention == null) {
+    protected void EnforceRetention(BackupJob job, JobsMetadata jobMeta)
+    {
+        if (job.BackupRetention == null)
+        {
             return;
         }
 
         int keep = job.BackupRetention.Count;
-        if (keep <= 0) {
+        if (keep <= 0)
+        {
             return;
         }
 
         List<string> removed = jobMeta.PurgeOldPackages(keep);
-        foreach (string pkg in removed) {
-            foreach (string target in job.Targets) {
-                try {
+        foreach (string pkg in removed)
+        {
+            foreach (string target in job.Targets)
+            {
+                try
+                {
                     string dir = Path.Combine(target, pkg);
-                    if (Directory.Exists(dir)) {
+                    if (Directory.Exists(dir))
+                    {
                         Directory.Delete(dir, recursive: true);
                     }
-                } catch { }
+                }
+                catch { }
             }
         }
 

@@ -1,4 +1,4 @@
-namespace BackerUp.Core.DTOs
+namespace BackerUp.Admin.Server.Models.DTOs
 {
     public class RetentionDto
     {

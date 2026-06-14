@@ -1,42 +1,50 @@
 ﻿using BackerUp.Core;
 using BackerUp.Core.Models;
-using System;
-using System.Collections.Generic;
-using System.IO;
 
-namespace BackerUp.Client.Models {
-    public class BackupIncremental : Backup {
-        public override void PerformBackup(BackupJob job, JobsMetadata jobMeta) {
-            if (job == null || job.Targets == null || job.Sources == null) {
+namespace BackerUp.Client.Models
+{
+    public class BackupIncremental : Backup
+    {
+        public override void PerformBackup(BackupJob job, JobsMetadata jobMeta)
+        {
+            if (job == null || job.Targets == null || job.Sources == null)
+            {
                 return;
             }
 
             DateTime now = DateTime.UtcNow;
 
             PackageEntry? current = jobMeta.GetCurrentPackage();
-            if (current == null) {
+            if (current == null)
+            {
                 // No package, perform full
                 base.PerformBackup(job, jobMeta);
                 return;
             }
 
             DateTime? last = jobMeta.LastSnapshotTimestampUtc ?? jobMeta.LastPackageTimestampUtc;
-            if (!last.HasValue) {
+            if (!last.HasValue)
+            {
                 base.PerformBackup(job, jobMeta);
                 return;
             }
 
             List<(string root, string path)> changed = new();
-            foreach (string src in job.Sources) {
+            foreach (string src in job.Sources)
+            {
                 if (string.IsNullOrWhiteSpace(src)) continue;
 
-                if (Directory.Exists(src)) {
-                    foreach (string f in Directory.GetFiles(src, "*", SearchOption.AllDirectories)) {
+                if (Directory.Exists(src))
+                {
+                    foreach (string f in Directory.GetFiles(src, "*", SearchOption.AllDirectories))
+                    {
                         DateTime lw;
                         try { lw = File.GetLastWriteTimeUtc(f); } catch { continue; }
                         if (lw > last.Value) changed.Add((src, f));
                     }
-                } else if (File.Exists(src)) {
+                }
+                else if (File.Exists(src))
+                {
                     DateTime lw;
                     try { lw = File.GetLastWriteTimeUtc(src); } catch { continue; }
                     if (lw > last.Value) changed.Add((Path.GetDirectoryName(src) ?? "", src));
@@ -51,26 +59,33 @@ namespace BackerUp.Client.Models {
             int snapshotIndex = current.SnapshotCount;
             int keepSnapshots = job.BackupRetention?.Size > 0 ? job.BackupRetention.Size : 0;
 
-            if (keepSnapshots > 0 && snapshotIndex >= keepSnapshots) {
+            if (keepSnapshots > 0 && snapshotIndex >= keepSnapshots)
+            {
                 // When reaching snapshot limit, perform a full backup (creates new package)
                 base.PerformBackup(job, jobMeta);
                 return;
             }
 
-            foreach (string target in job.Targets) {
-                try {
+            foreach (string target in job.Targets)
+            {
+                try
+                {
                     string snapDir = Path.Combine(target, current.Name, $"snapshot_{snapshotIndex}");
                     Directory.CreateDirectory(snapDir);
 
-                    foreach ((string root, string path) pair in changed) {
+                    foreach ((string root, string path) pair in changed)
+                    {
                         string rel;
                         try { rel = string.IsNullOrEmpty(pair.root) ? Path.GetFileName(pair.path) : Path.GetRelativePath(pair.root, pair.path); } catch { rel = Path.GetFileName(pair.path); }
 
                         string topFolder = "files";
-                        if (!string.IsNullOrEmpty(pair.root) && Directory.Exists(pair.root)) {
+                        if (!string.IsNullOrEmpty(pair.root) && Directory.Exists(pair.root))
+                        {
                             topFolder = Path.GetFileName(Path.TrimEndingDirectorySeparator(pair.root));
                             if (string.IsNullOrEmpty(topFolder)) topFolder = "files";
-                        } else if (!string.IsNullOrEmpty(pair.root)) {
+                        }
+                        else if (!string.IsNullOrEmpty(pair.root))
+                        {
                             topFolder = Path.GetFileName(pair.root);
                             if (string.IsNullOrEmpty(topFolder)) topFolder = "files";
                         }
@@ -79,7 +94,9 @@ namespace BackerUp.Client.Models {
                         Directory.CreateDirectory(Path.GetDirectoryName(dest) ?? snapDir);
                         File.Copy(pair.path, dest, overwrite: true);
                     }
-                } catch (Exception ex) {
+                }
+                catch (Exception ex)
+                {
                     LoggerService.Log($"Error creating snapshot in package {current.Name} for target {target}: {ex.Message}");
                 }
             }

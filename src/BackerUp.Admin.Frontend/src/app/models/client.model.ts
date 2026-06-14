@@ -2,6 +2,9 @@ export interface Client {
   id: string;
   name: string;
   isActive: boolean;
+  isApproved?: boolean;
+  isOnline?: boolean;
+  lastHealthCheck?: string | null;
   createdAt: string;
   jobIds?: number[];
 }

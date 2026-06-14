@@ -1,6 +1,4 @@
-﻿using BackerUp.Core.Models;
-
-namespace BackerUp.Editor
+﻿namespace BackerUp.Editor
 {
     internal class Program
     {

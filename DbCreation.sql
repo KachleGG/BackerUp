@@ -10,10 +10,14 @@ CREATE TABLE BackupJobs (
 );
 
 -- Clients
+-- Clients
+-- Note: clients register themselves and must be approved by an admin. We store approval and last healthcheck timestamp.
 CREATE TABLE Clients (
     id CHAR(36) PRIMARY KEY,
     name VARCHAR(255) NOT NULL,
     is_active BOOLEAN NOT NULL DEFAULT TRUE,
+    is_approved BOOLEAN NOT NULL DEFAULT FALSE,
+    last_healthcheck_at TIMESTAMP NULL DEFAULT NULL,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
@@ -45,15 +49,14 @@ CREATE TABLE Targets (
         ON DELETE CASCADE
 );
 
--- Retention (1:1 with BackupJobs)
-CREATE TABLE Retention (
-    id INT AUTO_INCREMENT PRIMARY KEY,
-    job_id INT NOT NULL UNIQUE,
-    count INT NOT NULL DEFAULT 3,
-    size INT NOT NULL DEFAULT 1,
-    CONSTRAINT fk_retention_job
-        FOREIGN KEY (job_id) REFERENCES BackupJobs(id)
-        ON DELETE CASCADE
+-- Retentions (1:1 with BackupJobs)
+-- Create Retentions table (if it does not already exist). Use a distinct FK name to avoid conflicts
+CREATE TABLE IF NOT EXISTS `Retentions` (
+    `id` INT AUTO_INCREMENT PRIMARY KEY,
+    `job_id` INT NOT NULL UNIQUE,
+    `count` INT NOT NULL DEFAULT 3,
+    `size` INT NOT NULL DEFAULT 1,
+    CONSTRAINT `fk_retentions_job` FOREIGN KEY (`job_id`) REFERENCES `BackupJobs`(`id`) ON DELETE CASCADE
 );
 
 -- JobsClients (many-to-many)

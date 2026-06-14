@@ -40,6 +40,30 @@ namespace BackerUp.Admin.Server.Controllers
             return Ok(jobs);
         }
 
+        [HttpGet("forClient/{clientId}")]
+        public IActionResult GetForClient(Guid clientId)
+        {
+            var jobs = _db.BackupJobs
+                .Include(j => j.Sources)
+                .Include(j => j.Targets)
+                .Include(j => j.Retention)
+                .Where(j => j.JobClients.Any(jc => jc.ClientId == clientId && jc.IsActive))
+                .ToList()
+                .Select(j => new BackupJobResponse
+                {
+                    Id = j.Id,
+                    Method = j.Method,
+                    Timing = j.Timing,
+                    CreatedAt = j.CreatedAt,
+                    Sources = j.Sources.Select(s => s.Path).ToList(),
+                    Targets = j.Targets.Select(t => t.Path).ToList(),
+                    Retention = j.Retention == null ? null : new RetentionDto { Count = j.Retention.Count, Size = j.Retention.Size }
+                })
+                .ToList();
+
+            return Ok(jobs);
+        }
+
         [HttpGet("{id}")]
         public IActionResult GetById(int id)
         {
@@ -132,5 +156,5 @@ namespace BackerUp.Admin.Server.Controllers
             return NoContent();
         }
 
-            }
-        }
+    }
+}
