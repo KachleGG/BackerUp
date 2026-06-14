@@ -2,7 +2,7 @@ import { Component, OnInit, signal, WritableSignal } from '@angular/core';
 import { Router } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { ClientsService } from '../../services/clients.service';
-import { Client } from '../../models/models';
+import { Client } from '../../models/client.model';
 
 @Component({
   selector: 'app-clients',

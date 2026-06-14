@@ -2,7 +2,7 @@ import { Component, OnInit, signal, WritableSignal } from '@angular/core';
 import { Router } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { UsersService } from '../../services/users.service';
-import { User } from '../../models/models';
+import { User } from '../../models/user.model';
 
 @Component({
   selector: 'app-users',

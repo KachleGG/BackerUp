@@ -43,7 +43,8 @@ namespace BackerUp.Core.Models
 
                 if (!File.Exists(AppConstants.ConfigFilePath))
                 {
-                    File.Create(AppConstants.ConfigFilePath);
+                    // create an empty JSON array so deserialization won't fail
+                    File.WriteAllText(AppConstants.ConfigFilePath, "[]");
                 }
             }
             catch (Exception ex) {

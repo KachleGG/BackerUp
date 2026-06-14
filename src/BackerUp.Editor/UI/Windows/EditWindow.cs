@@ -1,4 +1,5 @@
 ﻿using BackerUp.Core.Models;
+using BackerUp.Editor.Services;
 using BackerUp.Editor.UI.Components;
 using BackerUp.Editor.UI.Enums;
 using System;
@@ -115,7 +116,12 @@ namespace BackerUp.Editor.UI.Windows
                     Job.Sources = new List<string>(SourcesList.Values);
                     Job.Targets = new List<string>(TargetsList.Values);
 
-                    Config.SaveJobs(this.Application.Jobs);
+                    var api = new Services.BackupJobsApi();
+                    var updated = api.UpdateAsync(Job.Id, Job).GetAwaiter().GetResult();
+                    if (!updated)
+                    {
+                        Config.SaveJobs(this.Application.Jobs);
+                    }
                     OnSave?.Invoke();
                 }
             });

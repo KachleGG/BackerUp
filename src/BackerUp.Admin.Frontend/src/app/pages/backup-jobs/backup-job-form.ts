@@ -3,7 +3,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { BackupJobsService } from '../../services/backup-jobs.service';
-import { BackupMethod, RetentionDto } from '../../models/models';
+import { BackupMethod, RetentionDto } from '../../models/backup-job.model';
 
 @Component({
   selector: 'app-backup-job-form',

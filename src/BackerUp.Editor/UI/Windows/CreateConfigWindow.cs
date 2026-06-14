@@ -1,5 +1,7 @@
 ﻿using BackerUp.Core.Models;
+using BackerUp.Editor.Services;
 using BackerUp.Editor.UI.Components;
+using BackerUp.Editor.UI.Enums;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -15,8 +17,49 @@ namespace BackerUp.Editor.UI.Windows
         {
             IdBox = new TextBox { Label = "ID", Value = Config.GetJobs().Count.ToString() };
 
-            SourcesList = new ListSelection { Label = "Sources", Values = new List<string>() };
-            TargetsList = new ListSelection { Label = "Targets", Values = new List<string>() };
+            SourcesList = new ListSelection { Label = "Sources", Values = new List<string>(), OnPress = () => {
+                var doubleWindow = new DoubleWindow();
+                var dirSelectionWindow = new DirSelectionWindow(SourcesList.Values);
+                var dirListingWindow = new DirListingWindow(SourcesList.Values);
+
+                dirSelectionWindow.Initialize();
+                dirListingWindow.Initialize();
+
+                dirSelectionWindow.OnTab = () => doubleWindow.ActivePane = Pane.Right;
+                dirListingWindow.OnTab = () => doubleWindow.ActivePane = Pane.Left;
+                dirSelectionWindow.OnDirsChanged = () => dirListingWindow.Refresh();
+                dirSelectionWindow.OnEscape = () => Application.CloseWindow();
+                dirListingWindow.OnEscape = () => Application.CloseWindow();
+                dirListingWindow.OnEnter = () => Application.CloseWindow();
+
+                doubleWindow.LeftWindow = dirSelectionWindow;
+                doubleWindow.RightWindow = dirListingWindow;
+                doubleWindow.ActivePane = Pane.Left;
+
+                Application.OpenWindow(doubleWindow);
+            } };
+
+            TargetsList = new ListSelection { Label = "Targets", Values = new List<string>(), OnPress = () => {
+                var doubleWindow = new DoubleWindow();
+                var dirSelectionWindow = new DirSelectionWindow(TargetsList.Values);
+                var dirListingWindow = new DirListingWindow(TargetsList.Values);
+
+                dirSelectionWindow.Initialize();
+                dirListingWindow.Initialize();
+
+                dirSelectionWindow.OnTab = () => doubleWindow.ActivePane = Pane.Right;
+                dirListingWindow.OnTab = () => doubleWindow.ActivePane = Pane.Left;
+                dirSelectionWindow.OnDirsChanged = () => dirListingWindow.Refresh();
+                dirSelectionWindow.OnEscape = () => Application.CloseWindow();
+                dirListingWindow.OnEscape = () => Application.CloseWindow();
+                dirListingWindow.OnEnter = () => Application.CloseWindow();
+
+                doubleWindow.LeftWindow = dirSelectionWindow;
+                doubleWindow.RightWindow = dirListingWindow;
+                doubleWindow.ActivePane = Pane.Left;
+
+                Application.OpenWindow(doubleWindow);
+            } };
             MethodBox = new OptionBox
             {
                 Label = "Method",
@@ -40,23 +83,7 @@ namespace BackerUp.Editor.UI.Windows
                 Text = "OK",
                 OnPress = () =>
                 {
-                    var job = new BackupJob();
-
-                    job.Id = IdBox.Value;
-
-                    if (Enum.TryParse<BackupMethod>(MethodBox.Value, true, out var method))
-                        job.Method = method;
-
-                    job.Timing = TimingBox.Value;
-
-                    if (int.TryParse(RetentionCountBox.Value, out int count))
-                        job.BackupRetention.Count = count;
-
-                    if (int.TryParse(RetentionSizeBox.Value, out int size))
-                        job.BackupRetention.Size = size;
-
-                    Application.Jobs.Add(job);
-                    Config.SaveJobs(Application.Jobs);
+                    // collect and pass control to Application's OnSave handler
                     OnSave?.Invoke();
                 }
             });
@@ -75,6 +102,29 @@ namespace BackerUp.Editor.UI.Windows
             };
         }
 
+        public BackupJob CollectJob()
+        {
+            var job = new BackupJob();
+
+            job.Id = IdBox.Value;
+
+            if (Enum.TryParse<BackupMethod>(MethodBox.Value, true, out var method))
+                job.Method = method;
+
+            job.Timing = TimingBox.Value;
+
+            if (int.TryParse(RetentionCountBox.Value, out int count))
+                job.BackupRetention.Count = count;
+
+            if (int.TryParse(RetentionSizeBox.Value, out int size))
+                job.BackupRetention.Size = size;
+
+            job.Sources = new List<string>(SourcesList.Values);
+            job.Targets = new List<string>(TargetsList.Values);
+
+            return job;
+        }
+
         public override void HandleKey(ConsoleKeyInfo key)
         {
             if (Pairs.TryGetValue(key.Key, out var action))
@@ -89,6 +139,10 @@ namespace BackerUp.Editor.UI.Windows
                 if (key.Key == ConsoleKey.Enter && component is Button button)
                 {
                     button.OnPress?.Invoke();
+                }
+                else if (key.Key == ConsoleKey.Enter && component is ListSelection listSelection)
+                {
+                    listSelection.OnPress?.Invoke();
                 }
                 else
                 {

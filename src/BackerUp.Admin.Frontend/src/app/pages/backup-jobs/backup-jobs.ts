@@ -2,7 +2,7 @@ import { Component, OnInit, signal, WritableSignal } from '@angular/core';
 import { Router } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { BackupJobsService } from '../../services/backup-jobs.service';
-import { BackupJob } from '../../models/models';
+import { BackupJob } from '../../models/backup-job.model';
 
 @Component({
   selector: 'app-backup-jobs',
@@ -14,7 +14,9 @@ import { BackupJob } from '../../models/models';
 export class BackupJobs implements OnInit {
   jobs: WritableSignal<BackupJob[]> = signal<BackupJob[]>([]);
 
-  trackById(index: number, item: BackupJob) { return item.id; }
+  trackById(index: number, item: BackupJob): number {
+    return item.id;
+  }
 
   constructor(private backupJobsService: BackupJobsService, private router: Router) {}
 

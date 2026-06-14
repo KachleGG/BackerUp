@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { LogsService } from '../../services/logs.service';
-import { Log } from '../../models/models';
+import { Log } from '../../models/log.model';
 
 @Component({
   selector: 'app-dashboard',

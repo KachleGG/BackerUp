@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
-import { BackupJob, CreateBackupJobRequest } from '../models/models';
+import { BackupJob, CreateBackupJobRequest } from '../models/backup-job.model';
 import { API_BASE } from '../app.constants';
 
 @Injectable({ providedIn: 'root' })

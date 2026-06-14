@@ -1,4 +1,5 @@
 ﻿using BackerUp.Core.Models;
+using BackerUp.Editor.Services;
 using BackerUp.Editor.UI.Dialogues;
 using BackerUp.Editor.UI.Enums;
 using BackerUp.Editor.UI.Windows;
@@ -30,7 +31,9 @@ namespace BackerUp.Editor
             Console.ForegroundColor = ConsoleColor.White;
             Console.Clear();
 
-            Jobs = Config.GetJobs() ?? new List<BackupJob>();
+            var api = new Services.BackupJobsApi();
+            var remote = api.GetAllAsync().GetAwaiter().GetResult();
+            Jobs = (remote != null && remote.Count > 0) ? remote : (Config.GetJobs() ?? new List<BackupJob>());
 
             windows = new Stack<Window>();
 
@@ -60,6 +63,24 @@ namespace BackerUp.Editor
                 var createWindow = new CreateConfigWindow();
                 createWindow.OnSave = () =>
                 {
+                    // Attempt to create via API, if fails, fall back to local config
+                    var apiClient = new Services.BackupJobsApi();
+                    var job = createWindow.CollectJob();
+                    if (job != null)
+                    {
+                        var created = apiClient.CreateAsync(job).GetAwaiter().GetResult();
+                        if (created != null)
+                        {
+                            // Reload from API
+                            var reloaded = apiClient.GetAllAsync().GetAwaiter().GetResult();
+                            Jobs = reloaded;
+                        }
+                        else
+                        {
+                            Jobs.Add(job);
+                            Config.SaveJobs(Jobs);
+                        }
+                    }
                     CloseWindow();
                     Initialize();
                 };
@@ -81,8 +102,19 @@ namespace BackerUp.Editor
                     int index = listWindow.SelectedComponent;
                     if (index >= 0 && index < Jobs.Count)
                     {
-                        Jobs.RemoveAt(index);
-                        Config.SaveJobs(Jobs);
+                        var job = Jobs[index];
+                        var apiClient = new Services.BackupJobsApi();
+                        var deleted = apiClient.DeleteAsync(job.Id).GetAwaiter().GetResult();
+                        if (deleted)
+                        {
+                            var reloaded = apiClient.GetAllAsync().GetAwaiter().GetResult();
+                            Jobs = reloaded;
+                        }
+                        else
+                        {
+                            Jobs.RemoveAt(index);
+                            Config.SaveJobs(Jobs);
+                        }
                     }
                     Initialize();
                 };

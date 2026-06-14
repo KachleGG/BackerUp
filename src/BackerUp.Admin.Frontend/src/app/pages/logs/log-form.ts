@@ -3,7 +3,7 @@ import { Router } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { LogsService } from '../../services/logs.service';
-import { LogLevel } from '../../models/models';
+import { LogLevel } from '../../models/log.model';
 
 @Component({
   selector: 'app-log-form',

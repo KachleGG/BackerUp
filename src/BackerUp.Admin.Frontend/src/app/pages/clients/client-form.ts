@@ -4,7 +4,7 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { ClientsService } from '../../services/clients.service';
 import { BackupJobsService } from '../../services/backup-jobs.service';
-import { BackupJob } from '../../models/models';
+import { BackupJob } from '../../models/backup-job.model';
 
 @Component({
   selector: 'app-client-form',
