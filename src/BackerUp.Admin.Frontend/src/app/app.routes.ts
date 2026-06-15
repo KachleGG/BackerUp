@@ -10,12 +10,14 @@ import { Users } from './pages/users/users';
 import { UserForm } from './pages/users/user-form';
 import { Logs } from './pages/logs/logs';
 import { LogForm } from './pages/logs/log-form';
+import { authGuard, loginGuard } from './auth.guard';
 
 export const routes: Routes = [
-  { path: 'login', component: Login },
+  { path: 'login', component: Login, canMatch: [loginGuard] },
   {
     path: '',
     component: Layout,
+    canActivateChild: [authGuard],
     children: [
       { path: 'dashboard', component: Dashboard },
       { path: 'clients', component: Clients },

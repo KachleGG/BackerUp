@@ -41,6 +41,30 @@ public abstract class Backup
 
         DateTime now = DateTime.UtcNow;
 
+        List<string> validSources = new();
+        foreach (string source in job.Sources)
+        {
+            if (string.IsNullOrWhiteSpace(source))
+            {
+                LoggerService.Log($"Job {job.Id} has an empty source path and it was skipped.");
+                continue;
+            }
+
+            if (!Directory.Exists(source) && !File.Exists(source))
+            {
+                LoggerService.Log($"Job {job.Id} source path does not exist: {source}");
+                continue;
+            }
+
+            validSources.Add(source);
+        }
+
+        if (validSources.Count == 0)
+        {
+            LoggerService.Log($"Job {job.Id} has no valid source paths, skipping backup.");
+            return;
+        }
+
         // Full backups always create a new package
         CreateNewPackageForJob(job, jobMeta);
         PackageEntry? current = jobMeta.GetCurrentPackage();
@@ -53,15 +77,22 @@ public abstract class Backup
         {
             try
             {
+                if (string.IsNullOrWhiteSpace(target))
+                {
+                    LoggerService.Log($"Job {job.Id} has an empty target path and it was skipped.");
+                    continue;
+                }
+
+                if (!Directory.Exists(target))
+                {
+                    LoggerService.Log($"Job {job.Id} target path does not exist and was skipped: {target}");
+                    continue;
+                }
+
                 string dataDir = Path.Combine(target, current.Name, "fullBackup");
                 Directory.CreateDirectory(dataDir);
-                foreach (string src in job.Sources)
+                foreach (string src in validSources)
                 {
-                    if (string.IsNullOrWhiteSpace(src))
-                    {
-                        continue;
-                    }
-
                     string dest = Path.Combine(dataDir, Path.GetFileName(src.TrimEnd(Path.DirectorySeparatorChar)));
                     CopyPathPreserve(src, dest);
                 }
@@ -89,6 +120,18 @@ public abstract class Backup
         {
             try
             {
+                if (string.IsNullOrWhiteSpace(target))
+                {
+                    LoggerService.Log($"Job {job.Id} has an empty target path and it was skipped.");
+                    continue;
+                }
+
+                if (!Directory.Exists(target))
+                {
+                    LoggerService.Log($"Job {job.Id} target path does not exist and was skipped: {target}");
+                    continue;
+                }
+
                 // Create package base directory only. The actual data will be written to the 'fullBackup' folder when a full backup runs.
                 string packageDir = Path.Combine(target, packageBase);
                 Directory.CreateDirectory(packageDir);
@@ -107,6 +150,11 @@ public abstract class Backup
 
     protected void CopyPathPreserve(string source, string destination)
     {
+        if (string.IsNullOrWhiteSpace(source))
+        {
+            return;
+        }
+
         if (Directory.Exists(source))
         {
             foreach (string dirPath in Directory.GetDirectories(source, "*", SearchOption.AllDirectories))
@@ -123,8 +171,41 @@ public abstract class Backup
         }
         else if (File.Exists(source))
         {
-            Directory.CreateDirectory(Path.GetDirectoryName(destination) ?? "");
+            string? destinationDirectory = Path.GetDirectoryName(destination);
+            if (string.IsNullOrWhiteSpace(destinationDirectory))
+            {
+                LoggerService.Log($"Could not resolve destination directory for source {source}.");
+                return;
+            }
+
+            Directory.CreateDirectory(destinationDirectory);
             File.Copy(source, destination, overwrite: true);
+            return;
+        }
+
+        LoggerService.Log($"Source path disappeared before it could be copied: {source}");
+    }
+
+    protected bool TryCreateTargetPath(string jobId, string target, string relativePath, out string resolvedPath)
+    {
+        resolvedPath = string.Empty;
+
+        if (string.IsNullOrWhiteSpace(target))
+        {
+            LoggerService.Log($"Job {jobId} has an empty target path and it was skipped.");
+            return false;
+        }
+
+        try
+        {
+            resolvedPath = Path.Combine(target, relativePath);
+            Directory.CreateDirectory(resolvedPath);
+            return true;
+        }
+        catch (Exception ex)
+        {
+            LoggerService.Log($"Job {jobId} target path is invalid or could not be created: {target}. {ex.Message}");
+            return false;
         }
     }
 

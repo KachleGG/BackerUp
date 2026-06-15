@@ -1,6 +1,7 @@
 using BackerUp.Admin.Server.Data;
 using BackerUp.Admin.Server.Models.DTOs;
 using BackerUp.Admin.Server.Models.Entities;
+using BackerUp.Admin.Server.Services;
 using Microsoft.AspNetCore.Mvc;
 
 namespace BackerUp.Admin.Server.Controllers
@@ -10,17 +11,23 @@ namespace BackerUp.Admin.Server.Controllers
     public class ClientsController : ControllerBase
     {
         private readonly BackerUpDbContext _db;
+        private readonly ProblemLogService _problemLogService;
 
-        public ClientsController(BackerUpDbContext db)
+        public ClientsController(BackerUpDbContext db, ProblemLogService problemLogService)
         {
             _db = db;
+            _problemLogService = problemLogService;
         }
 
         [HttpPost("healthcheck")]
         public IActionResult HealthCheck(HealthCheckRequest request)
         {
             var client = _db.Clients.Find(request.Id);
-            if (client == null) return NotFound();
+            if (client == null)
+            {
+                _problemLogService.LogWarning($"Clients.HealthCheck client {request.Id} was not found.");
+                return NotFound();
+            }
 
             client.LastHealthCheck = DateTime.UtcNow;
             _db.SaveChanges();
@@ -60,11 +67,11 @@ namespace BackerUp.Admin.Server.Controllers
         [HttpGet("summary")]
         public IActionResult Summary()
         {
-            var now = DateTime.UtcNow;
+            var cutoff = DateTime.UtcNow.AddMinutes(-3);
             var total = _db.Clients.Count();
             var approved = _db.Clients.Count(c => c.IsApproved);
             var pending = total - approved;
-            var online = _db.Clients.Count(c => c.LastHealthCheck != null && (now - c.LastHealthCheck.Value).TotalMinutes <= 3);
+            var online = _db.Clients.Count(c => c.LastHealthCheck != null && c.LastHealthCheck >= cutoff);
             var offline = total - online;
 
             return Ok(new { Total = total, Approved = approved, PendingApproval = pending, Online = online, Offline = offline });
@@ -87,7 +94,11 @@ namespace BackerUp.Admin.Server.Controllers
                 })
                 .FirstOrDefault();
 
-            if (raw == null) return NotFound();
+            if (raw == null)
+            {
+                _problemLogService.LogWarning($"Clients.GetById client {id} was not found.");
+                return NotFound();
+            }
 
             var client = new ClientResponse
             {
@@ -150,7 +161,11 @@ namespace BackerUp.Admin.Server.Controllers
         public IActionResult Approve(Guid id)
         {
             var client = _db.Clients.Find(id);
-            if (client == null) return NotFound();
+            if (client == null)
+            {
+                _problemLogService.LogWarning($"Clients.Approve client {id} was not found.");
+                return NotFound();
+            }
 
             client.IsApproved = true;
             _db.SaveChanges();
@@ -194,7 +209,11 @@ namespace BackerUp.Admin.Server.Controllers
         public IActionResult Update(Guid id, UpdateClientRequest request)
         {
             var client = _db.Clients.Find(id);
-            if (client == null) return NotFound();
+            if (client == null)
+            {
+                _problemLogService.LogWarning($"Clients.Update client {id} was not found.");
+                return NotFound();
+            }
 
             client.Name = request.Name;
             client.IsActive = request.IsActive;
@@ -220,7 +239,11 @@ namespace BackerUp.Admin.Server.Controllers
         public IActionResult Delete(Guid id)
         {
             var client = _db.Clients.Find(id);
-            if (client == null) return NotFound();
+            if (client == null)
+            {
+                _problemLogService.LogWarning($"Clients.Delete client {id} was not found.");
+                return NotFound();
+            }
 
             _db.Clients.Remove(client);
             _db.SaveChanges();

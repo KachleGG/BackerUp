@@ -12,5 +12,7 @@ namespace BackerUp.Admin.Server.Models.Entities
         public string Password { get; set; } = string.Empty;
         [Column("created_at")]
         public DateTime CreatedAt { get; set; }
+
+        public ICollection<RefreshToken> RefreshTokens { get; set; } = new List<RefreshToken>();
     }
 }

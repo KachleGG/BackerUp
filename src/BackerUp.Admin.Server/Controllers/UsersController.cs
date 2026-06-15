@@ -1,6 +1,7 @@
 using BackerUp.Admin.Server.Data;
 using BackerUp.Admin.Server.Models.DTOs;
 using BackerUp.Admin.Server.Models.Entities;
+using BackerUp.Admin.Server.Services;
 using Microsoft.AspNetCore.Mvc;
 using System.Security.Cryptography;
 using System.Text;
@@ -12,10 +13,12 @@ namespace BackerUp.Admin.Server.Controllers
     public class UsersController : ControllerBase
     {
         private readonly BackerUpDbContext _db;
+        private readonly ProblemLogService _problemLogService;
 
-        public UsersController(BackerUpDbContext db)
+        public UsersController(BackerUpDbContext db, ProblemLogService problemLogService)
         {
             _db = db;
+            _problemLogService = problemLogService;
         }
 
         [HttpGet]
@@ -35,7 +38,11 @@ namespace BackerUp.Admin.Server.Controllers
         public IActionResult GetById(Guid id)
         {
             var user = _db.Users.Find(id);
-            if (user == null) return NotFound();
+            if (user == null)
+            {
+                _problemLogService.LogWarning($"Users.GetById user {id} was not found.");
+                return NotFound();
+            }
 
             return Ok(new UserResponse { Id = user.Id, Username = user.Username, CreatedAt = user.CreatedAt });
         }
@@ -44,7 +51,10 @@ namespace BackerUp.Admin.Server.Controllers
         public IActionResult Create(CreateUserRequest request)
         {
             if (_db.Users.Any(u => u.Username == request.Username))
+            {
+                _problemLogService.LogWarning($"Users.Create username '{request.Username}' already exists.");
                 return Conflict("Username already exists.");
+            }
 
             var user = new User
             {
@@ -64,7 +74,11 @@ namespace BackerUp.Admin.Server.Controllers
         public IActionResult Update(Guid id, UpdateUserRequest request)
         {
             var user = _db.Users.Find(id);
-            if (user == null) return NotFound();
+            if (user == null)
+            {
+                _problemLogService.LogWarning($"Users.Update user {id} was not found.");
+                return NotFound();
+            }
 
             user.Username = request.Username;
 
@@ -79,7 +93,11 @@ namespace BackerUp.Admin.Server.Controllers
         public IActionResult Delete(Guid id)
         {
             var user = _db.Users.Find(id);
-            if (user == null) return NotFound();
+            if (user == null)
+            {
+                _problemLogService.LogWarning($"Users.Delete user {id} was not found.");
+                return NotFound();
+            }
 
             _db.Users.Remove(user);
             _db.SaveChanges();

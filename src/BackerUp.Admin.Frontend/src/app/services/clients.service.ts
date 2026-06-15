@@ -1,7 +1,8 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
-import { Client, CreateClientRequest, UpdateClientRequest } from '../models/client.model';
+import { map } from 'rxjs';
+import { Client, ClientSummary, CreateClientRequest, UpdateClientRequest } from '../models/client.model';
 import { API_BASE } from '../app.constants';
 
 @Injectable({ providedIn: 'root' })
@@ -25,6 +26,18 @@ export class ClientsService {
 
   getPending(): Observable<Client[]> {
     return this.http.get<Client[]>(`${this.url}/pending`);
+  }
+
+  getSummary(): Observable<ClientSummary> {
+    return this.http.get<any>(`${this.url}/summary`).pipe(
+      map(summary => ({
+        total: summary.total ?? summary.Total ?? 0,
+        approved: summary.approved ?? summary.Approved ?? 0,
+        pendingApproval: summary.pendingApproval ?? summary.PendingApproval ?? 0,
+        online: summary.online ?? summary.Online ?? 0,
+        offline: summary.offline ?? summary.Offline ?? 0,
+      })),
+    );
   }
 
   approve(id: string): Observable<void> {

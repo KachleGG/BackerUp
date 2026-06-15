@@ -1,6 +1,7 @@
 using BackerUp.Admin.Server.Data;
 using BackerUp.Admin.Server.Models.DTOs;
 using BackerUp.Admin.Server.Models.Entities;
+using BackerUp.Admin.Server.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
@@ -11,10 +12,12 @@ namespace BackerUp.Admin.Server.Controllers
     public class BackupJobsController : ControllerBase
     {
         private readonly BackerUpDbContext _db;
+        private readonly ProblemLogService _problemLogService;
 
-        public BackupJobsController(BackerUpDbContext db)
+        public BackupJobsController(BackerUpDbContext db, ProblemLogService problemLogService)
         {
             _db = db;
+            _problemLogService = problemLogService;
         }
 
         [HttpGet]
@@ -43,6 +46,12 @@ namespace BackerUp.Admin.Server.Controllers
         [HttpGet("forClient/{clientId}")]
         public IActionResult GetForClient(Guid clientId)
         {
+            if (!_db.Clients.Any(c => c.Id == clientId))
+            {
+                _problemLogService.LogWarning($"BackupJobs.GetForClient client {clientId} was not found.");
+                return NotFound();
+            }
+
             var jobs = _db.BackupJobs
                 .Include(j => j.Sources)
                 .Include(j => j.Targets)
@@ -73,7 +82,11 @@ namespace BackerUp.Admin.Server.Controllers
                 .Include(j => j.Retention)
                 .FirstOrDefault(j => j.Id == id);
 
-            if (job == null) return NotFound();
+            if (job == null)
+            {
+                _problemLogService.LogWarning($"BackupJobs.GetById job {id} was not found.");
+                return NotFound();
+            }
 
             return Ok(new BackupJobResponse
             {
@@ -126,7 +139,11 @@ namespace BackerUp.Admin.Server.Controllers
                 .Include(j => j.Retention)
                 .FirstOrDefault(j => j.Id == id);
 
-            if (job == null) return NotFound();
+            if (job == null)
+            {
+                _problemLogService.LogWarning($"BackupJobs.Update job {id} was not found.");
+                return NotFound();
+            }
 
             job.Method = request.Method;
             job.Timing = request.Timing;
@@ -149,7 +166,11 @@ namespace BackerUp.Admin.Server.Controllers
         public IActionResult Delete(int id)
         {
             var job = _db.BackupJobs.Find(id);
-            if (job == null) return NotFound();
+            if (job == null)
+            {
+                _problemLogService.LogWarning($"BackupJobs.Delete job {id} was not found.");
+                return NotFound();
+            }
 
             _db.BackupJobs.Remove(job);
             _db.SaveChanges();

@@ -29,6 +29,19 @@ CREATE TABLE Users (
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
+-- Refresh tokens for admin authentication
+CREATE TABLE RefreshTokens (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    user_id CHAR(36) NOT NULL,
+    token_hash CHAR(64) NOT NULL UNIQUE,
+    expires_at TIMESTAMP NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    revoked_at TIMESTAMP NULL DEFAULT NULL,
+    CONSTRAINT fk_refresh_tokens_user
+        FOREIGN KEY (user_id) REFERENCES Users(id)
+        ON DELETE CASCADE
+);
+
 -- Sources
 CREATE TABLE Sources (
     id INT AUTO_INCREMENT PRIMARY KEY,
@@ -74,13 +87,14 @@ CREATE TABLE JobsClients (
 );
 
 -- Logs
+-- Problem logs can be stored without a specific JobsClients row.
 CREATE TABLE Logs (
     id INT AUTO_INCREMENT PRIMARY KEY,
-    jobs_clients_id INT NOT NULL,
+    jobs_clients_id INT NULL DEFAULT NULL,
     level ENUM('Info', 'Warning', 'Error') NOT NULL,
     description TEXT NOT NULL,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     CONSTRAINT fk_logs_jobsclients
         FOREIGN KEY (jobs_clients_id) REFERENCES JobsClients(id)
-        ON DELETE CASCADE
+        ON DELETE SET NULL
 );

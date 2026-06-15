@@ -2,6 +2,7 @@ using BackerUp.Admin.Server.Data;
 using BackerUp.Admin.Server.Models.DTOs;
 using BackerUp.Admin.Server.Models.Entities;
 using BackerUp.Admin.Server.Models.Enums;
+using BackerUp.Admin.Server.Services;
 using Microsoft.AspNetCore.Mvc;
 
 namespace BackerUp.Admin.Server.Controllers
@@ -11,10 +12,12 @@ namespace BackerUp.Admin.Server.Controllers
     public class LogsController : ControllerBase
     {
         private readonly BackerUpDbContext _db;
+        private readonly ProblemLogService _problemLogService;
 
-        public LogsController(BackerUpDbContext db)
+        public LogsController(BackerUpDbContext db, ProblemLogService problemLogService)
         {
             _db = db;
+            _problemLogService = problemLogService;
         }
 
         // GET api/logs?jobsClientsId=1&level=Error
@@ -53,8 +56,11 @@ namespace BackerUp.Admin.Server.Controllers
         [HttpPost]
         public IActionResult Create(CreateLogRequest request)
         {
-            if (!_db.JobsClients.Any(jc => jc.Id == request.JobsClientsId))
+            if (request.JobsClientsId.HasValue && !_db.JobsClients.Any(jc => jc.Id == request.JobsClientsId.Value))
+            {
+                _problemLogService.LogWarning($"Logs.Create job client {request.JobsClientsId} was not found.");
                 return BadRequest("JobClient not found.");
+            }
 
             var log = new Log
             {

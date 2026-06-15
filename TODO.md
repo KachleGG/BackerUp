@@ -1,4 +1,1 @@
 # BackerUp
-
-- [ ] web auth
-- [ ] logging

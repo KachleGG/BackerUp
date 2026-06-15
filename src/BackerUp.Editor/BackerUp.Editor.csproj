@@ -9,6 +9,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\BackerUp.Core\BackerUp.Core.csproj" />
+    <ProjectReference Include="..\BackerUp.Core\BackerUp.Core.csproj" />
   </ItemGroup>
 
 </Project>

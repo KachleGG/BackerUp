@@ -14,6 +14,30 @@ namespace BackerUp.Client.Models
 
             DateTime now = DateTime.UtcNow;
 
+            List<string> validSources = new();
+            foreach (string source in job.Sources)
+            {
+                if (string.IsNullOrWhiteSpace(source))
+                {
+                    LoggerService.Log($"Job {job.Id} has an empty source path and it was skipped.");
+                    continue;
+                }
+
+                if (!Directory.Exists(source) && !File.Exists(source))
+                {
+                    LoggerService.Log($"Job {job.Id} source path does not exist: {source}");
+                    continue;
+                }
+
+                validSources.Add(source);
+            }
+
+            if (validSources.Count == 0)
+            {
+                LoggerService.Log($"Job {job.Id} has no valid source paths, skipping differential backup.");
+                return;
+            }
+
             PackageEntry? current = jobMeta.GetCurrentPackage();
             if (current == null)
             {
@@ -31,10 +55,8 @@ namespace BackerUp.Client.Models
             }
 
             List<(string root, string path)> changed = new();
-            foreach (string src in job.Sources)
+            foreach (string src in validSources)
             {
-                if (string.IsNullOrWhiteSpace(src)) continue;
-
                 if (Directory.Exists(src))
                 {
                     foreach (string f in Directory.GetFiles(src, "*", SearchOption.AllDirectories))
@@ -71,6 +93,18 @@ namespace BackerUp.Client.Models
             {
                 try
                 {
+                    if (string.IsNullOrWhiteSpace(target))
+                    {
+                        LoggerService.Log($"Job {job.Id} has an empty target path and it was skipped.");
+                        continue;
+                    }
+
+                    if (!Directory.Exists(target))
+                    {
+                        LoggerService.Log($"Job {job.Id} target path does not exist and was skipped: {target}");
+                        continue;
+                    }
+
                     string snapDir = Path.Combine(target, current.Name, $"snapshot_{snapshotIndex}");
                     Directory.CreateDirectory(snapDir);
 

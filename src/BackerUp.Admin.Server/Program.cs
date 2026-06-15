@@ -1,6 +1,10 @@
 
 using BackerUp.Admin.Server.Data;
+using BackerUp.Admin.Server.Filters;
 using BackerUp.Admin.Server.Models.Entities;
+using BackerUp.Admin.Server.Services;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.IdentityModel.Tokens;
 using Microsoft.EntityFrameworkCore;
 using System.Security.Cryptography;
 using System.Text;
@@ -17,12 +21,32 @@ namespace BackerUp.Admin.Server
             // Add services to the container.
 
             builder.Services.AddDbContext<BackerUpDbContext>();
+            builder.Services.AddScoped<ProblemLogService>();
+            builder.Services.AddScoped<ProblemLoggingFilter>();
+            builder.Services.AddScoped<AuthService>();
             builder.Services.AddCors(options =>
             {
                 options.AddDefaultPolicy(policy =>
                     policy.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader());
             });
+            builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+                .AddJwtBearer(options =>
+                {
+                    var key = builder.Configuration["Jwt:Key"] ?? "BackerUp-Development-Key-Change-Me-Please-1234567890";
+                    options.TokenValidationParameters = new TokenValidationParameters
+                    {
+                        ValidateIssuerSigningKey = true,
+                        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(key)),
+                        ValidateIssuer = true,
+                        ValidIssuer = builder.Configuration["Jwt:Issuer"] ?? "BackerUp.Admin.Server",
+                        ValidateAudience = true,
+                        ValidAudience = builder.Configuration["Jwt:Audience"] ?? "BackerUp.Admin.Frontend",
+                        ValidateLifetime = true,
+                        ClockSkew = TimeSpan.FromSeconds(30)
+                    };
+                });
             builder.Services.AddControllers()
+                .AddMvcOptions(options => options.Filters.Add<ProblemLoggingFilter>())
                 .AddJsonOptions(o => o.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter()));
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
             builder.Services.AddEndpointsApiExplorer();
@@ -66,6 +90,7 @@ namespace BackerUp.Admin.Server
 
             app.UseHttpsRedirection();
             app.UseCors();
+            app.UseAuthentication();
             app.UseAuthorization();
 
 

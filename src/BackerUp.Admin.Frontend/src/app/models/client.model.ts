@@ -20,3 +20,11 @@ export interface UpdateClientRequest {
   isActive: boolean;
   jobIds?: number[];
 }
+
+export interface ClientSummary {
+  total: number;
+  approved: number;
+  pendingApproval: number;
+  online: number;
+  offline: number;
+}

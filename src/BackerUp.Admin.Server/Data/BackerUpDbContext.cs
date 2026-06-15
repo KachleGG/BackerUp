@@ -17,6 +17,7 @@ namespace BackerUp.Admin.Server.Data
         public DbSet<Client> Clients { get; set; }
         public DbSet<JobClient> JobsClients { get; set; }
         public DbSet<User> Users { get; set; }
+        public DbSet<RefreshToken> RefreshTokens { get; set; }
         public DbSet<Log> Logs { get; set; }
     }
 }

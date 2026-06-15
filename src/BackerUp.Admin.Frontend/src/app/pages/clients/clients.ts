@@ -13,7 +13,6 @@ import { Client } from '../../models/client.model';
 })
 export class Clients implements OnInit {
   clients: WritableSignal<Client[]> = signal<Client[]>([]);
-  viewingPending = false;
 
   trackById(index: number, item: Client) { return item.id; }
 
@@ -25,16 +24,6 @@ export class Clients implements OnInit {
 
   load(): void {
     this.clientsService.getAll().subscribe(data => this.clients.set(data));
-  }
-
-  loadPending(): void {
-    this.clientsService.getPending().subscribe(data => this.clients.set(data));
-  }
-
-  togglePending(): void {
-    this.viewingPending = !this.viewingPending;
-    if (this.viewingPending) this.loadPending();
-    else this.load();
   }
 
   add(): void {

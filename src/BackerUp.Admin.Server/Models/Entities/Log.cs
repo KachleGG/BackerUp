@@ -8,7 +8,7 @@ namespace BackerUp.Admin.Server.Models.Entities
         [Column("id")]
         public int Id { get; set; }
         [Column("jobs_clients_id")]
-        public int JobsClientsId { get; set; }
+        public int? JobsClientsId { get; set; }
         [Column("level")]
         public Level Level { get; set; }
         [Column("description")]
@@ -16,6 +16,6 @@ namespace BackerUp.Admin.Server.Models.Entities
         [Column("created_at")]
         public DateTime CreatedAt { get; set; }
 
-        public JobClient JobClient { get; set; } = null!;
+        public JobClient? JobClient { get; set; }
     }
 }
